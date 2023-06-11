@@ -560,18 +560,8 @@ function attemptPlaceBlock(x,y,dir,block){
 
     var newBlock = block.getCopy(x,y,dir);
     tileMap[x][y] = newBlock;
-    
-    // update existing blocks that may be effected
-    for( var i = 0 ; i < allDirections.length ; i++ ){
-        var td = getTargetAndDistance( x,y,allDirections[i] )
-        if( td[0] ){
-            td[0].mapUpdated()
-        }
-    }
-    
-    
+    updateBlocksThatMayBeEffected(x,y)
     newBlock.justPlaced();
-
 }
 
 function clearMap(){
@@ -587,12 +577,20 @@ function clearMap(){
 // called in src/blocks/wall.js : hitByLaser
 function attemptDeleteBlock(x,y){
     tileMap[x][y] = null
-    
-    // update existing blocks that may be effected
+    updateBlocksThatMayBeEffected(x,y)
+}
+
+// called after block x,y is placed/removed/modified
+function updateBlocksThatMayBeEffected(x,y){
     for( var i = 0 ; i < allDirections.length ; i++ ){
         var td = getTargetAndDistance( x,y,allDirections[i] )
-        if( td[0] ){
-            td[0].mapUpdated()
+        var solidTarget = td[0]
+        if( solidTarget ){
+            solidTarget.mapUpdated()
+        }
+        var passedOver = td[2]
+        for( var j = 0 ; j < passedOver.length ; j++ ){
+            passedOver[j].mapUpdated()
         }
     }
 }
@@ -604,18 +602,23 @@ function getTargetAndDistance( x,y,dir ) {
     var tx = x
     var ty = y
     var dist = 0
+    var passedThrough = []
     
     while( true ){
         tx += dir.dx
         ty += dir.dy
         
         if( !isTileOnMap(tx,ty) ) {
-            return [null,dist] // no target
+            return [null,dist,passedThrough] // no target
         }
         
         var tileObject = tileMap[tx][ty];
-        if( tileObject && tileObject.isSolid() ) {
-            return [tileObject,dist] // found target
+        if( tileObject ){
+            if( tileObject.isSolid() ) {
+                return [tileObject,dist,passedThrough] // found target
+            } else {
+                passedThrough.push(tileObject) // passed through object
+            }
         }
         
         dist += tileSize;
