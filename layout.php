@@ -26,15 +26,7 @@
     <div class="navbar-collapse collapse" id="navbarCollapse" style="">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
     
-    
-         <li class="nav-item active">
-           <a class="nav-link" href="sugarcubes.html">Sugar Cubes</a>
-         </li>
-        
-         <li class="nav-item ">
-           <a class="nav-link" href="tilegame.html">Tile Game</a>
-         </li>
-        
+    <? NAVITEMS ?>
       </ul>
     </div>
   </div>
@@ -47,25 +39,6 @@
       
       
   
-  
-<canvas id="gameCanvas" width="800" height="600"></canvas>
-<script src="js/sugarcubes.js?v=1"></script>
-<br>
-<p>
-    <a href="https://github.com/tessmero/sugarcubes">source github repo here</a>
-</p>
-      
-      
-<script>
-    var canvas = document.getElementById('gameCanvas');
-    var heightRatio = 6/8;
-    canvas.height = canvas.width * heightRatio;
-</script>
-<style>
-#gameCanvas {
-    width: 100%;
-    max-width: 800px;
-}
-</style>
+  <? CONTENT ?>
       
 </html>
