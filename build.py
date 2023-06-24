@@ -4,11 +4,12 @@ import os
 
 
 all_pages = [
+    ['warp', 'Warp'],
     ['sugarcubes', 'Sugar Cubes'],
-    ['tilegame', 'Tile Game']
+    ['tilegame', 'Tile Game'],
 ]
 
-home_page = 'sugarcubes'
+home_page = 'warp'
     
 
 # load layout for all pages

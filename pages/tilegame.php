@@ -24,16 +24,3 @@
     right-click: remove block
 </p>
 <script src="js/tilegame.js?v=1.1"></script>
-
-
-<script>
-    var canvas = document.getElementById('gameCanvas');
-    var heightRatio = 4/8;
-    canvas.height = canvas.width * heightRatio;
-</script>
-<style>
-#gameCanvas {
-    width: 100%;
-    max-width: 800px;
-}
-</style>
