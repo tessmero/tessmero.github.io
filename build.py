@@ -4,12 +4,13 @@ import os
 
 
 all_pages = [
+    ['puppy-puddle', 'Puppy Puddle'],
     ['warp', 'Warp'],
     ['sugarcubes', 'Sugar Cubes'],
     ['tilegame', 'Tile Game'],
 ]
 
-home_page = 'warp'
+home_page = 'puppy-puddle'
     
 
 # load layout for all pages
@@ -23,7 +24,7 @@ if '<? NAVITEMS ?>' not in layout:
 
 # remove existing html files
 for fname in os.listdir('.'):
-    if fname.endswith('.html'):
+    if fname.endswith('.html') and (not fname.startswith('google')):
         os.remove(fname)
         
         
