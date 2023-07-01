@@ -1066,7 +1066,7 @@ var all_ents = []
 //outer walls
 var p = .05
 //all_ents.push( new Platform( -p/2,p/2,2,p ) )
-all_ents.push( new Platform( -p/2,p/2,p,2 ) )
+all_ents.push( new Platform( -p/2,0,p,2 ) )
 all_ents.push( new Platform( 1-p/2,0,p,2 ) )
 //all_ents.push( new Platform( 0,1,2,p ) )
 
