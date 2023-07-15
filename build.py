@@ -4,6 +4,7 @@ import os
 
 
 all_pages = [
+    ['trees', 'Trees'],
     ['gawlf', 'Gawlf'],
     ['puppy-puddle', 'Puppy Puddle'],
     ['warp', 'Warp'],
@@ -11,7 +12,7 @@ all_pages = [
     ['tilegame', 'Tile Game'],
 ]
 
-home_page = 'gawlf'
+home_page = 'trees'
     
 
 # load layout for all pages
