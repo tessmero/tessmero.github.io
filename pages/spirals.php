@@ -1,7 +1,7 @@
 
 <canvas id="gameCanvas">
 </canvas>
-<script src="js/spirals.js?v=1"></script>
+<script src="js/spirals.js?v=2"></script>
 
 <a id="source-link" href="https://github.com/tessmero/spirals">source</a>
 

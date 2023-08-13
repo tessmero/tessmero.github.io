@@ -447,6 +447,9 @@ const global = {
     
     // total time elapsed in milliseconds
     t: 0,
+    resetCountdown: 30000,
+    resetDelay: 30000,
+    
     
     // graphics context
     canvas: null,
@@ -530,6 +533,14 @@ function mouseClick(e){
 function update(dt) {    
     fitToContainer()
     global.t += dt
+    
+    // reset periodically
+    global.resetCountdown -= dt
+    if( global.resetCountdown < 0 ){
+        global.balloons = []
+        global.spawnCountdown = 0
+        global.resetCountdown = global.resetDelay
+    }
     
     //spawn new Ballons
     if( (global.balloons.length < global.nBalloons) && (global.spawnCountdown<=0) ){
