@@ -433,7 +433,7 @@ function fillDots( g, faceVerts, lightIntensity ){
     })
     
     var step = dotSpacing( lightIntensity )
-    var rad = dotSize( lightIntensity )
+    var rad = Math.min( step/2-1e-4, dotSize( lightIntensity ) )
     var rad2 = 2*rad
     
     var cx = (tx/faceVerts.length)

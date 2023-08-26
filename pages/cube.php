@@ -1,7 +1,7 @@
 
 <canvas id="gameCanvas">
 </canvas>
-<script src="js/cube.js?v=1"></script>
+<script src="js/cube.js?v=2"></script>
 
 <a id="source-link" href="https://github.com/tessmero/cube">source</a>
 
