@@ -3,7 +3,11 @@
 import os
 
 
+
+home_page = 'mandala'
+
 all_pages = [
+    ['mandala','Mandala'],
     ['donut', 'Donut'],
     ['bubbles','Bubbles'],
     ['paintball','Paintball'],
@@ -18,13 +22,11 @@ all_pages = [
     ['planet', 'Planet'],
     ['trees', 'Trees'],
     ['gawlf', 'Gawlf'],
-    ['puppy-puddle', 'Puppy Puddle'],
+    ['puppy-puddle', 'Puppy'],
     ['warp', 'Warp'],
-    ['sugarcubes', 'Sugar Cubes'],
+    ['sugarcubes', 'Sugar'],
     ['tilegame', 'Tile Game'],
 ]
-
-home_page = 'donut'
     
 
 # load layout for all pages
