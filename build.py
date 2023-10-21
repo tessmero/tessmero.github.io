@@ -4,9 +4,10 @@ import os
 
 
 
-home_page = 'mandala'
+home_page = 'gears'
 
 all_pages = [
+    ['gears','Gears'],
     ['mandala','Mandala'],
     ['donut', 'Donut'],
     ['bubbles','Bubbles'],
