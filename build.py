@@ -4,7 +4,7 @@ import os
 
 
 
-home_page = 'gears'
+home_page = 'bubbles'
 
 all_pages = [
     ['gears','Gears'],

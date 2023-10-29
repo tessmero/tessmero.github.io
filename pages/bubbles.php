@@ -1,7 +1,7 @@
 
 <canvas id="gameCanvas">
 </canvas>
-<script src="js/bubbles.js?v=1"></script>
+<script src="js/bubbles.js?v=2"></script>
 
 <a id="source-link" href="https://github.com/tessmero/bubbles">source</a>
 

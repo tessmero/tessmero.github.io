@@ -23,6 +23,18 @@ function initBubbleRads(){
         global.bubbleRadCos[i] = Math.cos(a)
     }
     
+    
+    // more trig funcs for lighting details
+    global.nLightScale = 100
+    n = global.nRadii * global.nLightScale
+    global.lightRadSin = new Array(n).fill(null)
+    global.lightRadCos = new Array(n).fill(null)
+    for( var i = 0 ; i < n ; i++ ){
+        var a = twopi*i/n
+        global.lightRadSin[i] = Math.sin(a)
+        global.lightRadCos[i] = Math.cos(a)
+    }
+    
 }
 
 function updateBubbleRadPhysics(dt){
@@ -42,6 +54,14 @@ function deleteBubble(rmi){
         global.bubbleRads[rmi+j] = null
         global.bubbleRadLims[rmi+j] = null
     }
+}
+
+function getAvgRad(rmi){
+    var n = global.nRadii
+    var total = 0
+    for( var j = 0 ; j < n ; j++ )
+        total += global.bubbleRads[rmi+j] 
+    return total/n
 }
 
 // called in setup.js resetGame()
@@ -90,12 +110,14 @@ class Bubble {
         this.g = g
         this.targetRad = randRange(...global.bubbleRad)
         this.rmi = getNewBubbleIndex(this.targetRad)
+        
+        this.lightAngleIndex = Math.floor(-0.4*global.nRadii)
     }
     
     isOob(){
         var x = this.pos.x
         var y = this.pos.y
-        var m = global.bubbleRad[1]*2
+        var m = global.bubbleRad[1]*10
         return (x < -m) || (y < -m) || (x > 1+m) || (y > 1+m)
     }
     
@@ -135,6 +157,12 @@ class Bubble {
         for( var i = 0 ; i < global.nRadii ; i++ ){
             global.bubbleRadLims[this.rmi+i] = this.targetRad
         }
+        
+        // compute light angle
+        if( false ){
+            var angle = global.mousePos.sub(this.pos).getAngle()
+            this.lightAngleIndex = Math.floor( global.nRadii * angle  / twopi )
+        }
     }
 
     // limit rads to prevent crossing line a-b
@@ -161,19 +189,87 @@ class Bubble {
         }
     }
     
+    
     draw(g,dilate=0){
+        var start = this.edgePoint( 0, 1, dilate )
+        g.moveTo(...start)
+        for( var i = 1 ; i < global.nRadii ; i++ )
+            g.lineTo(...this.edgePoint( i, 1, dilate ))
+        g.closePath()//g.lineTo(...start)
+    }
+    
+    drawReflection(g,dilate=0){
         
-        for( var i = 0 ; i < global.nRadii ; i++ ){
-            var r = global.bubbleRads[this.rmi+i] + dilate
-            var x = this.pos.x + r * global.bubbleRadCos[i] 
-            var y = this.pos.y + r * global.bubbleRadSin[i]
-            if( i == 0 ){
-                g.moveTo(x,y)
+        var off,spread,ai,bi,r1,r2,start 
+        
+        off = -global.nRadii/30
+        spread = global.nRadii/30
+        ai = Math.floor( off-spread + this.lightAngleIndex )
+        bi = Math.floor( off+spread + this.lightAngleIndex )
+        r1 = .7
+        r2 = .9
+        start = this.edgePoint(ai,r1,dilate)
+        g.moveTo(...start)
+        for( var i = ai+1 ; i <= bi ; i++ )
+            g.lineTo(...this.edgePoint(i,r1,dilate))
+        for( var i = bi ; i >= ai ; i-- )
+            g.lineTo(...this.edgePoint(i,r2,dilate))
+        g.closePath()//g.lineTo(...start)
+        
+        off = global.nRadii/30
+        spread = global.nRadii/90
+        ai = Math.floor( off-spread + this.lightAngleIndex )
+        bi = Math.floor( off+spread + this.lightAngleIndex )
+        r1 = .78
+        r2 = .89
+        start = this.edgePoint(ai,r1,dilate)
+        g.moveTo(...start)
+        for( var i = ai+1 ; i <= bi ; i++ )
+            g.lineTo(...this.edgePoint(i,r1,dilate))
+        for( var i = bi ; i >= ai ; i-- )
+            g.lineTo(...this.edgePoint(i,r2,dilate))
+        g.closePath()//g.lineTo(...start)
+    }
+    
+    drawShadow(g, dilate=0){
+        
+        var off,spread,ai,bi,r1,r2,taper,roundr,n,first
+        
+        off = global.nRadii/2
+        spread = global.nRadii/4
+        ai = Math.floor( off-spread + this.lightAngleIndex )
+        bi = Math.floor( off+spread + this.lightAngleIndex )
+        r1 = .8
+        r2 = 1
+        taper = 1-r1
+        roundr = .1
+        n = bi-ai
+        first = true
+        for( var i = 0 ; i <= n ; i++ ) {
+            var cdi = Math.abs(i-(n/2)) 
+            var cdr = cdi / n
+            if( cdr < roundr ) cdr = roundr
+            var r = r1+taper * (cdr/.5)
+            var p = this.edgePoint(ai+i,r,dilate)
+            if( first ){
+                g.moveTo(...p)
+                first = false
             } else {
-                g.lineTo(x,y)
+                g.lineTo(...p)
             }
         }
-        
+        for( var i = bi ; i >= ai ; i-- )
+            g.lineTo(...this.edgePoint(i,r2,dilate))
+        g.closePath()
+    }
+    
+    edgePoint(i,r=1,dilate=0){
+        i = nnmod(i,global.nRadii)
+        r = r*global.bubbleRads[this.rmi+i] + dilate
+        return [
+            this.pos.x + r * global.bubbleRadCos[i],
+            this.pos.y + r * global.bubbleRadSin[i]
+        ]
     }
     
     drawDebug(g){
@@ -432,21 +528,25 @@ const global = {
     mousePos: v(0,0),           //internal units
 
     // 
-    backgroundColor: 'gray',
-    bubbleColor: 'white',
-    edgeColor: 'black',
+    backgroundColor: 'white',
+    bubbleColor: '#f093bf',
+    edgeColor: '#b44e7e',
+    shadowColor: '#ed74aa',
+    reflectionColor: 'white',
+    edgeWidth: .002, // only for reflections
     
     // physics settings
-    maxBubbles: 30,
-    nRadii: 30,
+    maxBubbles: 20,
+    nRadii: 100,
     bubblePadding: .01,
+    
     
     // high-level OOP state
     allBubbles: [],
     
     // detailed state optimized vars
     // see math/rad_manager.js
-    bubbleRad: [.04,.08],
+    bubbleRad: [.04,.11],
     bubbleRads: null, // MxN bubbles' edge shapes
     bubbleRadVels: null, // MxN bubbles' edge momentums
     bubbleRadCos: null, // N pre-computed cosines
@@ -456,12 +556,12 @@ const global = {
     brFmag: 1e-6, //
     bubbleFmag: 1e-5, // force between bubbles
     bubbleFlim: 1e-5,
-    bubbleGmag: 1e-6, // bubble bouyancy
+    bubbleGmag: 5e-7, // bubble bouyancy
     bubbleFric: 1e-2, // bubble overal motion
     
     //
     bubbleSpawnCountdown: 0,
-    bubbleSpawnDelay: 500,
+    bubbleSpawnDelay: 800,
 
     
     //debug
@@ -479,17 +579,35 @@ function draw(fps, t) {
     var canvas = global.canvas
     g.fillStyle = global.backgroundColor
     g.fillRect( 0, 0, 1, 1 )
+    g.lineWidth = global.edgeWidth
 
-    // draw bubbles
-    g.fillStyle = global.edgeColor
-    g.beginPath()
-    global.allBubbles.forEach( b => b.draw(g,.005) )
-    g.fill()
+    if( true ){
+        // draw bubbles
+        g.fillStyle = global.edgeColor
+        g.beginPath()
+        global.allBubbles.forEach( b => b.draw(g,.005) )
+        g.fill()
+        g.fillStyle = global.bubbleColor
+        g.beginPath()
+        global.allBubbles.forEach( b => b.draw(g,0) )
+        g.fill()
+    }
     
-    g.fillStyle = global.bubbleColor
-    g.beginPath()
-    global.allBubbles.forEach( b => b.draw(g,0) )
-    g.fill()
+    if( true ){
+        // reflections on top of bubbles
+        g.fillStyle = global.reflectionColor
+        g.beginPath()
+        global.allBubbles.forEach( b => b.drawReflection(g,0) )
+        g.fill()
+    }
+    
+    if( true ){
+        // shadows on top of bubbles
+        g.fillStyle = global.shadowColor
+        g.beginPath()
+        global.allBubbles.forEach( b => b.drawShadow(g,0) )
+        g.fill()
+    }
     
     // draw bubble debug
     if( global.debugBubbles ){
@@ -505,6 +623,16 @@ function draw(fps, t) {
             g.arc(c.x,c.y,global.bubbleRad[1],0,twopi)
             g.fill()
         })
+    }
+    
+    // debug draw mouse
+    if( false ){
+        var c = global.mousePos
+        g.fillStyle = 'red'
+        g.beginPath()
+        g.moveTo(c.x,c.y)
+        g.arc(c.x,c.y,.01,0,twopi)
+        g.fill()
     }
 
     //debug
@@ -533,8 +661,8 @@ function updateMousePos(event){
     
     )
     global.mousePos = new Vector( 
-        virtualMouseX = (global.canvasMousePos.x-global.canvasOffsetX)/global.canvasScale / global.minDist, 
-        virtualMouseY = (global.canvasMousePos.y-global.canvasOffsetY)/global.canvasScale / global.minDist
+        virtualMouseX = (global.canvasMousePos.x-global.canvasOffsetX)/global.canvasScale, 
+        virtualMouseY = (global.canvasMousePos.y-global.canvasOffsetY)/global.canvasScale
     )
 }
 
@@ -556,11 +684,11 @@ function spawnBubble(){
         return
     }
     
-    var side = randInt(0,4)   
+    var side = randInt(0,2)*2   
     var a = global.screenCorners[side]
     var b = global.screenCorners[(side+1)%4]
     var pos = va(a,b,randRange(.4,.6))
-    pos = pos.add( pos.sub(global.screenCenter).mul(.2) )
+    pos = pos.add( pos.sub(global.screenCenter).mul(global.allBubbles.length > 0 ? 1 : .1) )
     var vel = v(0,0)
     var m = global.bubbleGmag
     var g
@@ -588,7 +716,7 @@ function update(dt) {
     
     global.allBubbles = global.allBubbles.filter(b => {
         b.update(dt)
-        if( b.isOob() ){
+        if( b.eaten || b.isOob() ){
             deleteBubble(b.rmi)
             return false
         }
@@ -607,6 +735,17 @@ function update(dt) {
                 
                 //found intersecting pair
                 var ints = getCircleIntersections(a.pos.x,a.pos.y,a.maxRad, b.pos.x,b.pos.y,b.maxRad )
+                
+                // check if one is inside the other
+                if( ((d2<a.mr2) || (d2<b.mr2))  ){// && (null==segmentsIntersection(a.pos,b.pos,ints[0], ints[1])) ) {
+                    var rada = getAvgRad(i*global.nRadii)
+                    var radb = getAvgRad(j*global.nRadii)
+                    var smallerBubble = ((rada < radb) ? a : b)
+                    smallerBubble.eaten = true
+                    continue
+                }
+                
+                // limit rads for intersecting pair
                 global.debugLines.push( [a.pos,b.pos] )
                 global.debugLines.push( ints )
                 a.limitRads( ...ints, dt)
