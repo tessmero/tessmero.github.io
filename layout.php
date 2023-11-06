@@ -13,11 +13,15 @@
         body {
           height: 100%
         }
+        
+    .nav-item.active a{
+        color: white !important;
+    }
 </style>
 
   </head>
   <body style="text-align:center">
-  <nav class="d-sm-none d-md-block navbar navbar-expand-xxl navbar-dark fixed-top bg-dark">
+  <nav class="d-sm-none d-md-block navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="index.html">tessmero.github.io</a>
     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
