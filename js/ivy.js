@@ -431,7 +431,6 @@ function doRandomPattern(){
     let allPatterns = [
         squarePattern,
         hexPattern,
-        //trianglePattern,
     ]
     
     allPatterns[Math.floor(randRange(0,allPatterns.length))]()
@@ -447,7 +446,7 @@ function squarePattern(){
             global.allScaffolds.push(new Scaffold(v(x,y),v(x,y+dy)))
         }
     }
-    let s = global.allScaffolds[Math.floor(global.allScaffolds.length/2)]
+    let s = global.allScaffolds[Math.floor(global.allScaffolds.length*randRange(.48,.52))]
     global.allVines = [new Vine(s,0,.2)]
 }
 
@@ -488,28 +487,9 @@ function hexPattern(){
     
     global.allVines = []
     for( let i = 0 ; i < 1 ; i++ ) {
-        let s = global.allScaffolds[Math.floor(global.allScaffolds.length*randRange(.3,.7))]
+        let s = global.allScaffolds[Math.floor(global.allScaffolds.length*randRange(.49,.51))]
         global.allVines.push(new Vine(s,0,.2))
     }
-}
-
-function trianglePattern(){
-    global.allScaffolds = []
-    let dy = .09
-    let dx = .1
-    for( let x = 0 ; x < 1 ; x += dx ){
-        let iy = 0
-        for( let y = 0 ; y < 1 ; y += dy ){
-            let ox = ( iy%2 ) ? 0 : dx/2 
-            iy += 1
-            
-            global.allScaffolds.push(new Scaffold(v(x+ox,y),v(x+ox+dx,y)))
-            global.allScaffolds.push(new Scaffold(v(x+ox,y),v(x+ox+dx/2,y+dy)))
-            global.allScaffolds.push(new Scaffold(v(x+ox,y),v(x+ox-dx/2,y+dy)))
-        }
-    }
-    let s = global.allScaffolds[Math.floor(global.allScaffolds.length/2)]
-    global.allVines = [new Vine(s,0,.2)]
 }
 
 
