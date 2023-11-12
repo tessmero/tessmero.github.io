@@ -4,9 +4,10 @@ import os
 
 
 
-home_page = 'trees'
+home_page = 'ivy'
 
 all_pages = [
+    ['ivy',          'Ivy',       True,   '20231112'],
     ['gears',        'Gears',     True,   '20231022'],
     ['mandala',      'Mandala',   False,  '20231015'],
     ['donut',        'Donut',     False,  '20231008'],
