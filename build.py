@@ -4,10 +4,11 @@ import os
 
 
 
-home_page = 'warp'
+home_page = 'grass'
 
 all_pages = [
-    ['jellyfish',    'Jellyfish', True,   '20231119'],
+    ['grass',        'Grass',     True,   '20231203'],
+    ['jellyfish',    'Jellyfish', False,  '20231119'],
     ['ivy',          'Ivy',       True,   '20231112'],
     ['gears',        'Gears',     True,   '20231022'],
     ['mandala',      'Mandala',   False,  '20231015'],
