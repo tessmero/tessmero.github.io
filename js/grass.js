@@ -357,12 +357,12 @@ function drawGrassBlade(ctx,p){
     
     
     let r = global.grassRadius
-    let n = 4
+    let n = Math.floor(randRange(4,5))
     let s = 0, ds = .001
     let ao = randRange(0,twopi)
-    let period = randRange(30,30)
-    let lo_mf = -global.windSpeed*.6
-    let hi_mf = global.windSpeed*.6
+    let period = randRange(40,50)
+    let lo_mf = -global.windSpeed*.9
+    let hi_mf = global.windSpeed*.9
     let wf = Math.sin(ao+global.pollenX/twopi/period)
     wf = lo_mf + (hi_mf-lo_mf)*((wf/2)+1)
     for( let i = 0 ; i<n ; i++ ){
@@ -389,7 +389,10 @@ function updateMousePos(event){
     )
     
     // adjust target wind speed based on mouse X
-    global.targetWindSpeed = (global.mousePos.x - .5)*2
+    global.targetWindSpeed = (global.mousePos.x - .5)*4
+    if(Math.abs(global.targetWindSpeed) > 1){
+        global.targetWindSpeed = Math.sign(global.targetWindSpeed)
+    }        
     global.autoWindCountdown = global.autoWindDelay
 }
 
@@ -444,8 +447,8 @@ function update(dt) {
     }
         
     
-    // advance pollen x-axis animation
-    global.pollenX += global.windSpeed*dt
+    // advance wind animation
+    global.pollenX += 4*global.windSpeed*dt
 }
 
 
