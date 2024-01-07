@@ -1,7 +1,7 @@
 
 <canvas id="gameCanvas">
 </canvas>
-<script src="js/star.js?v=1"></script>
+<script src="js/star.js?v=2"></script>
 
 <a id="source-link" href="https://github.com/tessmero/star">source</a>
 
