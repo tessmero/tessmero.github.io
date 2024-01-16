@@ -4,10 +4,11 @@ import os
 
 
 
-home_page = 'star'
+home_page = 'loops'
 
 all_pages = [
-    ['star',         'Star',     True,    '20240107'],
+    ['loops',        'Loops',     True,   '20240115'],
+    ['star',         'Star',      True,   '20240107'],
     ['grass',        'Grass',     True,   '20231203','20231211'],
     ['jellyfish',    'Jellyfish', False,  '20231119'],
     ['ivy',          'Ivy',       True,   '20231112'],
