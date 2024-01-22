@@ -4,7 +4,7 @@ import os
 
 
 
-home_page = 'loops'
+home_page = 'paintball'
 
 all_pages = [
     ['loops',        'Loops',     True,   '20240115'],
@@ -16,7 +16,7 @@ all_pages = [
     ['mandala',      'Mandala',   False,  '20231015'],
     ['donut',        'Donut',     False,  '20231008'],
     ['bubbles',      'Bubbles',   True,   '20231001','20231029'],
-    ['paintball',    'Paintball', False,  '20230924'],
+    ['paintball',    'Paintball', True,  '20230924'],
     ['sketch',       'Sketch',    True,   '20230917'],
     ['sand',         'Sand',      True,   '20230910'],
     ['slide',        'Slide',     False,  '20230903'],
@@ -27,8 +27,8 @@ all_pages = [
     ['castle',       'Castle',    True,   '20230730'],
     ['planet',       'Planet',    False,  '20230723'],
     ['trees',        'Trees',     True,   '20230716'],
-    ['gawlf',        'Gawlf',     True,   '20230709'],
-    ['puppy-puddle', 'Puppy',     True,   '20230701'],
+    ['gawlf',        'Gawlf',     False,  '20230709'],
+    ['puppy-puddle', 'Puppy',     False,  '20230701'],
     ['warp',         'Warp',      True,   '20230625'],
     ['sugarcubes',   'Sugar',     False,  '20230618'],
     ['tilegame',     'Tile Game', False,  '20230611'],
