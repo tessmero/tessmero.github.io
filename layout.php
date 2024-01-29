@@ -21,6 +21,7 @@
 
   </head>
   <body style="text-align:center">
+  <div id="navbar" class="container-fluid">
   <nav class="d-sm-none d-md-block navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="index.html">tessmero.github.io</a>
@@ -36,6 +37,7 @@
   </div>
 </nav>
   
+  </div>
       
       
   

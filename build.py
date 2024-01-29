@@ -4,9 +4,10 @@ import os
 
 
 
-home_page = 'paintball'
+home_page = 'raincatcher'
 
 all_pages = [
+    ['raincatcher',  'Rain Catcher',    True,   '20240128'],
     ['loops',        'Loops',     True,   '20240115'],
     ['star',         'Star',      True,   '20240107'],
     ['grass',        'Grass',     True,   '20231203','20231211'],
