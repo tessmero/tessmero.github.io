@@ -1651,8 +1651,20 @@ function init() {
     cvs.addEventListener("mousemove", mouseMove);
     cvs.addEventListener("mousedown", mouseDown);
     cvs.addEventListener("mouseup", mouseUp);
-    cvs.addEventListener("touchstart", mouseDown, false);
-    cvs.addEventListener("touchend", mouseUp, false);
+    cvs.addEventListener("touchstart", mouseDown);
+    cvs.addEventListener("touchend", mouseUp);   
+    
+    // https://stackoverflow.com/a/63469884
+    var previousTouch;
+    cvs.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        mouseMove({
+            clientX: touch.pageX,
+            clientY: touch.pageY
+        })
+        e.preventDefault()
+    });
+    
     document.addEventListener("keydown", keyDown )
     
     global.canvas = cvs
