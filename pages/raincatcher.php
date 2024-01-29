@@ -3,7 +3,7 @@
 </canvas>
 <script src="js/raincatcher.js?v=2"></script>
 
-<a id="source-link" href="https://github.com/tessmero/raincatcher">source</a>
+<a id="source-link" href="https://github.com/tessmero/idle">source</a>
 
 <style>
     canvas {
