@@ -1312,11 +1312,13 @@ function resume(){
 }
 
 function play(){
-    //reset progress
+    
+    // reset progress
     global.nParticles = 100
     global.particlesCollected = 0
     global.allPois = []
     global.grabbedParticles = new Set()
+    global.activeReleasePatterns = []
     
     resume()
 }
@@ -1570,6 +1572,14 @@ function mouseMove(e){
 
 function mouseDown(e){
     if( global.mouseDownDisabled ) return
+    
+    // update mouse position
+    if( e.touches ){
+        mouseMove(e.touches[0])
+    } else {
+        mouseMove(e)
+    }
+    
     global.mouseDown = true
     
     // trigger clickable gui
@@ -1679,10 +1689,14 @@ function init() {
 
 function resetGame(){
     
+    // init start menu background sim
     global.nParticles = 1000
     global.particlesCollected = 0
     global.grabbedParticles = new Set()
     global.allPois = []
+    global.activeReleasePatterns = []
+    
+    
     resetRand(hard = true)
     fitToContainer()   
 }
