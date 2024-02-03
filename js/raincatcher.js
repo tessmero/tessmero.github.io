@@ -1,4 +1,949 @@
 
+class Vector {
+    
+    constructor(x,y){
+        this.x = x
+        this.y = y
+    }
+    
+    static polar(angle,magnitude){
+        var x = magnitude*Math.cos(angle)
+        var y = magnitude*Math.sin(angle)
+        return new Vector(x,y)
+    }
+    
+    xy(){
+        return [this.x,this.y]
+    }
+    
+    copy(){
+        return new Vector(this.x,this.y)
+    }
+    
+    // rotate around origin
+    rotate(angle){
+        var cos = Math.cos(angle)
+        var sin = Math.sin(angle)
+        return new Vector( this.x*cos-this.y*sin, this.y*cos+this.x*sin )
+    }
+    
+    getAngle(){
+        return Math.atan2( this.y, this.x )
+    }
+    
+    getD2(){
+        return Math.pow(this.x,2) + Math.pow(this.y,2)
+    }
+    
+    getMagnitude(){
+        return Math.sqrt( this.getD2() )
+    }
+    
+    // get unit vector with same angle
+    normalize(){
+        return this.mul( 1.0/this.getMagnitude() )
+    }
+    
+    add( o ){
+        return new Vector( this.x+o.x, this.y+o.y )
+    }
+    
+    sub( o ){
+        return new Vector( this.x-o.x, this.y-o.y )
+    }
+    
+    mul( k ){
+        return new Vector( this.x*k, this.y*k )
+    }
+}
+
+// shorthands
+var pi = Math.PI
+var pio2 = Math.PI/2
+var twopi = 2*Math.PI
+var sqrt2 = Math.sqrt(2)
+var phi = 1.618033988749894
+function v(){return new Vector(...arguments)}
+function vp(){return Vector.polar(...arguments)}
+
+
+function rectCenter(x,y,w,h){
+    return [x+w/2,y+h/2]
+}
+
+function padRect(x,y,w,h,p){
+    return [x-p,y-p,w+2*p,h+2*p]
+}
+
+function vInRect(p,x,y,w,h){
+    return (p.x>=x) && (p.x<=(x+w)) && (p.y>=y) && (p.y<=(y+h))
+}
+
+function inRect(px,py,x,y,w,h){
+    return (px>=x) && (px<=(x+w)) && (py>=y) && (py<=(y+h))
+}
+
+function randRange(min,max){
+    return min + rand()*(max-min)
+}
+
+function randChoice(options){
+    return options[Math.floor( Math.random() * options.length )]
+}
+
+function cleanAngle(a){
+    a = nnmod(a,twopi)
+    if( a > Math.PI ){
+        a -= twopi
+    }
+    if( a < -Math.PI ){
+        a += twopi
+    }
+    return a        
+}
+
+// oscillate from 0 to 1
+function pulse(period,offset=0){
+    return (Math.sin(offset + global.t * twopi/period)+1)/2
+}
+
+//non-negative mod
+function nnmod(a,b){
+    var r = a%b
+    return (r>=0) ? r : r+b
+}
+
+// weighted avg
+function avg(a,b,r=.5){
+    return (a*(1.0-r)) + (b*r)
+}
+function va(a,b,r=.5){
+    return v(avg(a.x,b.x,r),avg(a.y,b.y,r))
+}
+function la(l1,l2,r){
+    return [va(l1[0],l2[0],r),va(l1[1],l2[1],r)]
+}
+
+function arePointsClockwise(p1,p2,p3,p4) {
+    const crossProduct = (p1[0] - p2[0]) * (p3[1] - p2[1]) - (p1[1] - p2[1]) * (p3[0] - p2[0]);
+    return crossProduct > 0;
+}
+
+
+// compute intersection point of two lines
+// the two lines are described by pairs of points
+// requires two lists, each containing 2 xy points
+function intersection( ab1, ab2 ){
+    var mb1 = mb(...ab1)
+    var mb2 = mb(...ab2)
+    
+    if( mb1.m == Infinity ){
+        var x = ab1[0].x
+        var y = mb2.m*x + mb2.b
+    } else if (mb2.m == Infinity ){
+        var x = ab2[0].x
+        var y = mb1.m*x + mb1.b
+    } else {
+        //m1*x+b1 = m2*x+b2
+        //m1*x-m2*x = b2-b1
+        //x = (b2-b1)/(m1-m2)
+        var x = (mb2.b-mb1.b)/(mb1.m-mb2.m)
+        var y = mb1.m*x + mb1.b
+    }
+    
+    return new Vector( x, y )
+}
+
+// compute slope and intercept
+// euclidean line with points a and b
+function mb(a,b){
+    var m = (b.y-a.y)/(b.x-a.x)
+    var b = a.y - m*a.x 
+    return {m:m,b:b}
+}
+
+// https://stackoverflow.com/a/2450976
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex > 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+
+class Gui {
+    
+    constructor(){
+        this.clickableElements = []
+        //clickableElements populated in game_states.js
+    }
+    
+    // build list of GuiElement instances
+    buildElements(){ throw new Error('not implemented') }
+    
+    draw(g){
+        this.clickableElements.forEach(e => e.draw(g))
+    }
+}
+
+class GuiElement {
+
+    constructor(){}
+
+    draw(g){
+        throw new Error(`Method not implemented in ${this.constructor.name}.`);
+    }
+
+    click(){
+        throw new Error(`Method not implemented in ${this.constructor.name}.`);
+    }
+}
+
+class Poi {
+    constructor(p){
+        this.pos = p
+        this.vel = v(0,0)
+        this.md2 = global.poiStartArea
+        if( this.md2 > global.poiMaxArea ) this.md2 = global.poiMaxArea
+        
+        
+        this.pressure = 0 //0-1 increases when held by player
+        this.pressurePattern = null//instance of PressurePattern
+    }
+    
+    update(dt){
+        this.r = Math.sqrt(this.md2) // only allowed sqrt
+        
+        // push on-screen
+        var sc = global.screenCorners
+        if( this.pos.x < sc[0].x ) this.pos.x = sc[0].x
+        if( this.pos.x > sc[2].x ) this.pos.x = sc[2].x
+        if( this.pos.y < sc[0].y ) this.pos.y = sc[0].y
+        if( this.pos.y > sc[2].y ) this.pos.y = sc[2].y
+        
+        this.vel = this.vel.mul(1.0-dt*global.poiFriction)
+        this.pos = this.pos.add(this.vel.mul(dt))
+        
+        if( this.isHeld ){
+            
+            // build pressure
+            if( !this.pressurePattern ) this.pressurePattern = randomPressurePattern()
+            this.pressure = Math.min(1, this.pressure+dt*global.poiPressureBuildRate)
+            
+        } else if(this.pressure > 0) {           
+            
+            // release pressure
+            if( !this.isReleasing ){
+                
+                // just started releasing, generate new pattern
+                this.isReleasing = true
+                let n = Math.round( this.pressure * this.md2 * global.poiParticlesReleased )
+                global.activeReleasePatterns.push(randomReleasePattern(n,...this.pos.xy(),this.r))
+            }
+            
+            // ongoing gradual release animation
+            this.pressure = Math.max(0,this.pressure - dt*global.poiPressureReleaseRate)
+            
+            if( this.pressure == 0 ){
+                
+                // finished release animation
+                this.pressurePattern = null
+                this.isReleasing = false
+            }
+
+        }
+        
+        // shrink gradually
+        if( !this.isHeld ) this.md2 -= dt*global.poiShrinkRate
+        return ( this.md2 > 0 )
+    }
+    
+    drawBuildCursor(g){
+        
+        let p = global.mousePos.xy()
+        
+        g.beginPath()
+        g.moveTo(...p)
+        g.arc(...p,this.r,0,twopi)
+        g.fill()
+    }
+    
+    draw(g){
+        let p
+        if( (this.pressure > 0) && this.pressurePattern ){
+            // indicate pressure
+            let off = this.pressurePattern.getOffset(
+                                global.t,this.r,this.pressure)
+            p = this.pos.add(off)
+        } else {
+            p = this.pos
+        }
+        p = p.xy()
+        
+        let r = this.r
+        g.beginPath()
+        g.moveTo(...p)
+        g.arc(...p,r,0,twopi)
+        g.fill()
+        
+        
+        if( false ){
+            
+            // debug pressure level
+            g.fillStyle = global.backgroundColor
+            drawText(g,...p,this.pressure.toFixed(2).toString())
+            g.fillStyle = global.lineColor
+        }
+        
+    }
+}
+
+
+// movement pattern to represent pressure building
+
+class PressurePattern {
+    constructor(){}
+    
+    //get xy for given pressure 0-1
+    getOffset(t,r, pressure) { throw new Error('not implemented') }
+}
+
+
+// release procedural particles from a poi
+
+class ReleasePattern {
+    
+    constructor(n,x,y,r){
+        this.n = n // total number of particles
+        this.x = x
+        this.y = y
+        this.r = r
+        this.startTime = global.t
+    }
+    
+    // draw particles
+    // return the number of particles that just passed off-screen
+    draw(g){ throw new Error('not implemented') }
+}
+
+// a tool is an aelement of the quick bar
+// it determines the appearnace of the mouse cursor
+// and the click behavior
+
+class Tool{
+   
+    getToolbarIcon(){ throw new Error("not implemented") }
+   
+    drawCursor(g,p){ throw new Error("not implemented") }
+   
+    mouseDown(){ throw new Error("not implemented") }
+    
+    update(dt){}
+    
+    mouseMove(){}
+    
+    mouseUp(){}
+}
+
+
+
+class BuildTool extends Tool{
+    
+    constructor(){
+        super()
+        
+        this.iconLayout = [
+            ' www ',
+            'wwwww',
+            'wwwww',
+            'wwwww',
+            ' www '
+        ]
+    }
+    
+    drawToolbarIcon(g,rect){ 
+        drawLayout(g,...rectCenter(...rect),this.iconLayout)
+    }
+   
+    drawCursor(g,p){ 
+        drawLayout(g,...p,this.iconLayout) 
+    }
+   
+    mouseDown(){
+        if( global.allPois.length < global.maxPoiCount ){
+            global.allPois.push(new Poi(global.mousePos))
+        }
+        global.selectedToolIndex = 0
+    }
+    
+    mouseMove(){}
+    
+    mouseUp(){}
+}
+
+// abstract base class for typical rectangular buttons
+class Button extends GuiElement {
+    constructor(rect,action){
+        super()
+        
+        this.rect = rect
+        this.action = action
+        this.hoverable = true
+    }
+    
+    click(){
+        this.action()
+    }
+    
+    
+    draw(g){
+        this.constructor._draw(g,this.rect,this.hoverable)
+    }
+    
+    static _draw(g,rect,hoverable=true,fill=true)
+    {
+        let lineCol = global.lineColor
+        let labelCol = global.lineColor
+        
+        if(this.hoverable && vInRect(global.mousePos,...rect)){
+            lineCol = 'white'
+        }
+        g.fillStyle = global.backgroundColor
+        g.strokeStyle = lineCol
+        if( fill ) g.fillRect(...rect)
+        g.strokeRect(...rect)
+        g.fillStyle = global.lineColor
+    }
+}
+
+// default tool, collect raindrops, pressure/move pois
+
+class DefaultTool extends Tool{
+    
+    constructor(){
+        super()
+        
+        this.iconLayout = [
+            '#### ',
+            '###  ',
+            '#### ',
+            '# ###',
+            '   ##']
+            
+        //null or falsey -> mouse not being pressed
+        //Poi instance -> mouse pressed on poi
+        //otherwise -> mouse pressed on background
+        this.held = null 
+    }
+   
+    drawCursor(g,p,pad){ 
+        if( this.held instanceof Poi ){
+            
+            //held on poi
+            drawLayout(g,...p,this.iconLayout,false,pad) 
+            
+            
+        } else if( this.held ){
+            
+            // held on background
+            // catching rain
+            let c = global.mousePos
+            g.beginPath()
+            g.moveTo(c.x+global.mouseGrabRadius,c.y)
+            g.arc(c.x,c.y,global.mouseGrabRadius,0,twopi)
+            g.stroke()
+            
+        } else {
+            drawLayout(g,...p,this.iconLayout,false,pad) 
+        }
+    }
+   
+    mouseDown(p){ 
+        // either grab the poi or start catching rain
+        this.held = global.allPois.find( poi => 
+            poi.pos.sub(p).getD2() < poi.md2 ) 
+        if(!this.held){
+            this.held = 'catching'
+        } else {
+            this.held.isHeld = true
+        }
+    }
+    mouseUp(p){ this.held = null }
+    
+    update(dt){
+        if( this.held instanceof Poi ){
+            
+            //held on poi
+            
+            // build pressure
+            let poi = this.held
+            poi.pressure = Math.min(1, poi.pressure+dt*global.poiPressureBuildRate)
+            
+            //apply force
+            let d = global.mousePos.sub(poi.pos)
+            let d2 = d.getD2()
+            if( d2 < 1e-4 ) return
+            let angle = d.getAngle()
+            
+            let accel = vp( angle, global.poiPlayerF/poi.md2 )
+            poi.vel = poi.vel.add(accel.mul(dt))
+            
+        } else if( this.held ){
+            
+            // held on background
+            // grab particles from ongoing rain
+            if( global.particlesInGrabRange ){ //draw.js
+                global.particlesInGrabRange.forEach( i => {
+                    if( !global.grabbedParticles.has(i) ){
+                        global.grabbedParticles.add(i)
+                        global.particlesCollected += 1
+                    }
+                })
+            }
+            
+            // grab particles from release patterns
+            if( global.activeReleasePatterns ){
+                let totalGrabbed = 0
+                global.activeReleasePatterns.forEach(rp => {
+                    rp.inGrabRange.forEach(i => {
+                        rp.offScreen[i] = true
+                        global.particlesCollected += 1
+                        totalGrabbed += 1
+                    })
+                    rp.inGrabRange.length = 0
+                })
+                
+                // add to ongoing rain
+                for( let i = 0 ; i < totalGrabbed ; i++ )
+                    global.grabbedParticles.add(global.nParticles+i)
+                global.nParticles += totalGrabbed
+            }
+        }
+    }
+    
+}
+
+    
+
+
+class Hud extends Gui {
+    
+    constructor(){
+        super()
+        
+        this.pauseIcon = [
+            'ww ww',
+            'ww ww',
+            'ww ww',
+            'ww ww',
+            'ww ww'
+        ]
+        
+        this.collectedIcon = [
+            'WWWWW',
+            'W   W',
+            'WWWWW',
+            'WWWWW',
+            'WWWWW',
+        ]
+        
+        this.rainIcon = [
+            'W   W',
+            '  W  ',
+            'W   W',
+            '  W  ',
+            'W   W',
+        ]
+        
+        this.catchIcon = [
+            'W   W',
+            'W WWW',
+            'WWWWW',
+            ' WWW ',
+            ' WWW ',
+        ]
+        
+        this.statsIcon = [
+            'W WWW',
+            '     ',
+            'W WWW',
+            '     ',
+            'W WWW',
+        ]
+    }
+    
+    // implement gui
+    buildElements(){
+        let sc = global.screenCorners
+        let sr = global.screenRect
+        let m = .1
+        
+        // layout buttons at top of screen
+        let topRow = [sc[0].x,sc[0].y, (sc[2].x-sc[0].x), m]
+        let topLeft = [sr[0],sr[1],m,m]
+        let topRight = [sc[2].x-m,sr[1],m,m]
+        let topClp = [sr[0]+sr[2]*.1,sr[1]+m/4]
+        let topCenterP = [sr[0]+sr[2]*.4,topClp[1]]
+        let topCrp = [sr[0]+sr[2]*.7,topClp[1]]
+        
+        // layout toolbar at bottom of screen
+        let mx = .2
+        let nbuttons = toolList.length
+        let padding = .005
+        let buttonWidth = m-padding*2
+        let rowHeight = buttonWidth + padding*2
+        let rowWidth = buttonWidth*nbuttons + padding*(nbuttons+1)
+        let brow = [sr[0]+sr[2]/2-rowWidth/2,sr[1]+sr[3]-rowHeight, rowWidth, rowHeight]
+        let slots = []
+        for( let i = 0 ; i < nbuttons ; i++ ){
+            slots.push([brow[0]+padding+i*(buttonWidth+padding),brow[1]+padding,buttonWidth,buttonWidth])
+        }
+        
+        
+        // build top hud
+        let result = [
+        
+            // stats button
+            new IconButton(topLeft,this.statsIcon,toggleStats), //game_state.js
+            
+            // particles on screen
+            new StatReadout(topClp,this.rainIcon,() => 
+                global.nParticles.toString()),
+            
+            // catch rate %
+            new StatReadout(topCenterP,this.catchIcon,() => 
+                Math.floor(100*(global.grabbedParticles.size/global.nParticles)).toString()+'%'),
+                
+            // total caught
+            new StatReadout(topCrp,this.collectedIcon,() => 
+                global.particlesCollected.toString()),
+            
+            // pause button
+            new IconButton(topRight,this.pauseIcon,pause), //game_state.js
+        ]
+        
+        
+        // build toolbar buttons
+        for( let i = 0 ; i < toolList.length ; i++ ){
+            result.push(
+                new ToolbarButton(slots[i],toolList[i].iconLayout,i)
+            )
+        }
+        
+        return result
+    }
+}
+
+
+class PauseMenu extends Gui {
+    
+    // implement Gui
+    buildElements(){
+        let sc = global.screenCorners
+        let sr = global.screenRect
+        
+        // layout a column of wide buttons in the middle of the screen
+        let pad = .005
+        let w = .4
+        let h = .1
+        let n = 4
+        let th = h*n + pad*(n-1)
+        let x = sr[0]+sr[2]/2-w/2
+        let y = sr[1]+sr[3]/2-th/2
+        let slots = []
+        for( let i = 0 ; i < n ; i++ )
+            slots.push([x,y+i*(h+pad),w,h])
+        
+        
+        return [
+            new TextButton(slots[0],'RESUME',resume),//game_states.js
+            new TextButton(slots[2],'QUIT',quit)//game_states.js
+        ]
+    }
+}
+
+
+class ShakePressurePattern extends PressurePattern {
+    
+    constructor(){
+        super()
+    }
+    
+    //get xy for given pressure 0-1
+    getOffset(t,r, pressure) { 
+        return vp(
+            rand()*twopi,
+            r * pressure * 1e-1 * Math.sin(t*1e-2 + rand()*twopi)
+        )
+    }
+}
+
+class SimpleRingReleasePattern extends ReleasePattern{
+    
+    constructor(...p){
+        super(...p)
+        
+        // prepare to keep track of OOB particles
+        this.offScreen = new Array(this.n).fill(false)
+    
+        // prepare to keep track of particles grabbed by the player
+        this.inGrabRange = []
+    }
+    
+    // draw released particles
+    // return the number of particles that just passed off-screen
+    draw(g,t){ 
+        let result = 0
+    
+        let speed = global.fallSpeed*5
+        t -= this.startTime - this.r/speed
+        let particle_radius = global.particle_radius
+        let n = this.n
+        let a0 = rand() * twopi
+        let da = twopi/n
+        let r = speed*t
+        this.inGrabRange.length = 0
+        for( let i = 0 ; i < n ; i++ ){
+            if( this.offScreen[i] ) continue //skip particles that previously passed off-screen
+            
+            let a = a0+da*i
+            let x = this.x+Math.cos(a)*r
+            let y = this.y+Math.sin(a)*r
+            
+            if( !inRect( x,y, ...global.screenRect ) ){
+                //particle just passed off-screen
+                this.offScreen[i] = true
+                result += 1
+            }
+            
+            ///
+            let p = v(x,y)
+            let d2 = global.mousePos.sub(p).getD2()
+            if( d2 < global.mouseGrabMd2 ){
+                this.inGrabRange.push(i)
+            }
+            
+            // draw particle
+            g.fillRect( x-particle_radius, y-particle_radius, 2*particle_radius, 2*particle_radius )
+        }
+        
+        return result
+    }
+}
+
+class SpinPressurePattern extends PressurePattern {
+    
+    //get xy for given pressure 0-1 for pois of radius r
+    getOffset(t,r, pressure) { 
+        return vp(
+            t*1e-2 + rand()*twopi,
+            r * pressure * .2
+        )
+    }
+}
+
+
+class StartMenu extends Gui {
+    
+    constructor(){
+        super()
+            
+        
+        this.rainIcon = [
+            'W   W',
+            '  W  ',
+            'W   W',
+            '  W  ',
+            'W   W',
+        ]
+        
+    }
+    
+    // implement gui
+    buildElements(){
+        let sc = global.screenCorners
+        let sr = global.screenRect
+        let m = .3
+        
+        // layout a column of wide buttons in the middle of the screen
+        let message = 'PRESS AND DRAG'
+        let dims = getTextDims(message)
+        let pad = .005
+        let w = dims[0] + pad*10
+        let h = .1
+        let n = 10
+        let th = h*n + pad*(n-1)
+        let x = sr[0]+sr[2]/2-w/2
+        let y = sr[1]+sr[3]/2-th/2
+        let slots = []
+        for( let i = 0 ; i < n ; i++ )
+            slots.push([x,y+i*(h+pad),w,h])
+        
+        return [
+            new TextLabel(slots[2],message),
+            new TextLabel(slots[3],'TO CATCH RAIN'),
+            new TextButton(slots[8],'PLAY',play),  //game_state.js
+        ]
+    }
+}
+
+
+class StatsMenu extends Gui {
+    
+    // implement gui
+    buildElements(){
+        let sc = global.screenCorners
+        let m = .4
+        let bigCenterRect = [sc[0].x+m,sc[0].y+m, (sc[2].x-sc[0].x)-2*m, (sc[2].y-sc[0].y)-2*m]
+        return [
+            new TextButton(bigCenterRect,'STATS',toggleStats)//game_states.js
+        ]
+    }
+}
+
+
+// a line of unchanging on-screen text
+class TextLabel extends GuiElement {
+    constructor(rect,label){
+        super()
+        
+        this.rect = rect
+        this.label = label
+    }
+    
+    // implement GuiElement
+    draw(g){
+        let rect = this.rect
+        let label = this.label
+        
+        g.fillStyle = global.backgroundColor
+        drawText(g, ...rectCenter(...rect), label, true, .05)
+        g.fillStyle = global.lineColor
+        drawText(g, ...rectCenter(...rect), label, true, 0)
+    }
+    
+    // implement GuiElement
+    click(){
+        //do nothing
+    }
+}
+
+// a line of text that may change
+class DynamicTextLabel extends TextLabel {
+    
+    constructor(rect,labelFunc){
+        super(rect,'')
+        this.labelFunc = labelFunc
+    }
+    
+    draw(g){
+        
+        // get updated label
+        this.label = this.labelFunc()
+        
+        super.draw(g)
+    }
+}
+
+// a button with a pixel art icon
+class IconButton extends Button {
+    
+    constructor(rect,icon,action){
+        super(rect,action)
+        this.icon = icon
+    }
+    
+    // implement GuiElement
+    draw(g){
+        super.draw(g)
+        drawLayout(g,...rectCenter(...this.rect),this.icon) //character.js
+    }
+}
+
+// a button with text
+class TextButton extends Button {
+    
+    constructor(rect,label,action){
+        super(rect,action)
+        this.label = label
+    }
+   
+    draw(g){
+        super.draw(g)
+        drawText(g, ...rectCenter(...this.rect), this.label)
+    }
+    
+}
+
+// a pixel art icon followed by a line of dynamic text
+class StatReadout extends DynamicTextLabel {
+    
+    constructor(rect,icon,labelFunc){
+        super(rect,labelFunc)
+        this.icon = icon
+    }
+    
+    // implement GuiElement
+    draw(g){
+        super.draw(g)
+        
+        let scale = .5
+        let s = '  '+this.label // make space for icon on left
+        let xy = this.rect
+        
+        // clear surrounding rectangle
+        let rdims = getTextDims(s,scale)
+        let dims = padRect( ...xy, ...rdims, .005 )
+        g.fillStyle = global.backgroundColor
+        g.fillRect(...dims)
+        g.fillStyle = global.lineColor
+        
+        let ch = charHeight
+        let tps = global.textPixelSize 
+        drawLayout(g,xy[0],xy[1],this.icon,false,0,scale) //character.js
+        drawText(g,...xy, s,false,0,.5)
+    }
+}
+
+// a button in the toolbar with a pixel art icon
+class ToolbarButton extends IconButton {
+    
+    constructor(rect,icon,indexInToolbar){
+        super(rect,icon,null)
+        this.indexInToolbar = indexInToolbar
+    }
+                
+    click(){ 
+        global.selectedToolIndex = this.indexInToolbar
+    }
+    
+    draw(g){
+        Button._draw(g,this.rect,this.hoverable,true)
+                    
+        // check if selected
+        if( this.indexInToolbar == global.selectedToolIndex ){
+            let outer = this.rect
+            let m = .005
+            let inner = [outer[0]+m,outer[1]+m,outer[2]-2*m,outer[3]-2*m]
+            Button._draw(g,inner,this.hoverable,false)
+        }
+        
+        // draw icon inside button
+        drawLayout(g,...rectCenter(...this.rect),this.icon) //character.js
+    }
+}
+
 var charWidth = 5
 var charHeight = 5
 
@@ -378,916 +1323,147 @@ var charLayouts = {
     ],
 }
 
-class Gui {
-    
-    constructor(){
-        this.clickableElements = this.buildElements()
-    }
-    
-    // build list of clickable elements
-    // with "rect" and functions "click" and "draw" 
-    buildElements(){ throw new Error('not implemented') }
-    
-    draw(g){
-        this.clickableElements.forEach(e => e.draw(g))
-    }
-    
-    // draw pixel art icon followed by a line of text
-    drawStatReadout(g,xy,icon,s){
-        let scale = .5
-        s = '  '+s // make space for icon on left
-        
-        // clear surrounding rectangle
-        let rdims = getTextDims(s,scale)
-        let dims = padRect( ...xy, ...rdims, .005 )
-        g.fillStyle = global.backgroundColor
-        g.fillRect(...dims)
-        g.fillStyle = global.lineColor
-        
-        let ch = charHeight
-        let tps = global.textPixelSize 
-        drawLayout(g,xy[0],xy[1],icon,false,0,scale) //character.js
-        drawText(g,...xy, s,false,0,.5)
-    }
-    
-    // draw button with pixel art icon 
-    drawButtonWithIcon(g,rect,icon){
-        this.drawButton(g,rect)
-        drawLayout(g,...rectCenter(...rect),icon) //character.js
-    }
-    
-    // draw typical button
-    drawButton(g,rect,label=null,hoverable=true){
-        let lineCol = global.lineColor
-        let labelCol = global.lineColor
-        if(hoverable && inRect(global.mousePos,...rect)){
-            lineCol = 'white'
-        }
-        g.fillStyle = global.backgroundColor
-        g.strokeStyle = lineCol
-        g.fillRect(...rect)
-        g.strokeRect(...rect)
-        g.fillStyle = global.lineColor
-        
-        if( label ){
-            g.fillStyle = labelCol
-            drawText(g, ...rectCenter(...rect), label)
-        }
-    }
-    
-    // draw typical label
-    drawLabel(g,rect,label){
-        g.fillStyle = global.backgroundColor
-        drawText(g, ...rectCenter(...rect), label, true, .05)
-        g.fillStyle = global.lineColor
-        drawText(g, ...rectCenter(...rect), label, true, 0)
-    }
-}
 
-
-class StartMenu extends Gui {
+let lastDrawTime = 0
     
-    constructor(){
-        super()
-            
-        
-        this.rainIcon = [
-            'W   W',
-            '  W  ',
-            'W   W',
-            '  W  ',
-            'W   W',
-        ]
-        
-    }
+// Render graphics
+function draw(fps, t) {
     
-    // implement gui
-    buildElements(){
-        let sc = global.screenCorners
-        let sr = global.screenRect
-        let m = .3
+    var ctx = global.ctx
+    let g = ctx
+    var canvas = global.canvas
+    
+    // draw background
+    ctx.fillStyle = global.backgroundColor
+    ctx.fillRect( ...global.screenRect )
+    
+    // draw falling particles
+    ctx.fillStyle = global.lineColor
+    resetRand()
+    let n_particles = global.nParticles
+    let sc = global.screenCorners
+    let sr = global.screenRect
+    let anim_angle = global.t*1e-4
+    let particle_radius = global.particle_radius
+    let particle_wiggle = global.particle_wiggle
+    let md2 = global.mouseGrabMd2
+    global.particlesInGrabRange.clear()
+    for( var i = 0 ; i < n_particles ; i++ ){
+        var a = anim_angle + rand() * Math.PI*2
+        var r = randRange(0,particle_wiggle)
+        var x = sr[0] + rand() * sr[2] + r*Math.cos(a * Math.floor(rand()*10))
+        var yr = randRange(0,sr[3])
+        var rawy = global.fallSpeed*global.t+yr
+        var prawy = global.fallSpeed*lastDrawTime+yr
         
-        // layout a column of wide buttons in the middle of the screen
-        let message = 'PRESS AND DRAG'
-        let dims = getTextDims(message)
-        let pad = .005
-        let w = dims[0] + pad*10
-        let h = .1
-        let n = 10
-        let th = h*n + pad*(n-1)
-        let x = sr[0]+sr[2]/2-w/2
-        let y = sr[1]+sr[3]/2-th/2
-        let slots = []
-        for( let i = 0 ; i < n ; i++ )
-            slots.push([x,y+i*(h+pad),w,h])
+        // if this particle just looped, ungrab it
+        if( Math.floor( rawy / sr[3] ) != Math.floor( prawy / sr[3] ) ){
+            global.grabbedParticles.delete(i)
+        }
+        var y = sr[1] + nnmod( rawy, sr[3] ) //+ r*Math.sin(a)
         
-        return [
-            {
-                // message banner
-                rect: null,
-                draw: g => this.drawLabel(g,slots[2],message),//gui.js
-                click: null, //game_states.js
-            }, 
-            {
-                // message banner
-                rect: null,
-                draw: g => this.drawLabel(g,slots[3],'TO CATCH RAIN'),//gui.js
-                click: null, //game_states.js
-            }, 
-            {
-                // start button
-                rect: slots[8],
-                draw: g => {
-                    if( global.particlesCollected>global.particlesRequiredToStart ) this.drawButton(g,slots[8],'PLAY')
-                },//gui.js
-                click: () => {
-                    if( global.particlesCollected>global.particlesRequiredToStart ) play() //game_state.js
-                    else return true
-                }
+        // check if currently grabbed
+        if( global.grabbedParticles.has(i) ) continue
+        
+        ctx.fillRect( x-particle_radius, y-particle_radius, 2*particle_radius, 2*particle_radius )
+        
+        //check if in mouse grab radius
+        let p = v(x,y)
+        let d2 = global.mousePos.sub(p).getD2()
+        if( d2 < md2 ){
+            if( !global.particlesInGrabRange.has(i) ){
+                global.particlesInGrabRange.add(i)
             }
-        ]
-    }
-}
-
-
-class Hud extends Gui {
-    
-    constructor(){
-        super()
-        
-        this.pauseIcon = [
-            'ww ww',
-            'ww ww',
-            'ww ww',
-            'ww ww',
-            'ww ww'
-        ]
-        
-        this.collectedIcon = [
-            'WWWWW',
-            'W   W',
-            'WWWWW',
-            'WWWWW',
-            'WWWWW',
-        ]
-        
-        this.rainIcon = [
-            'W   W',
-            '  W  ',
-            'W   W',
-            '  W  ',
-            'W   W',
-        ]
-        
-        this.catchIcon = [
-            'W   W',
-            'W WWW',
-            'WWWWW',
-            ' WWW ',
-            ' WWW ',
-        ]
-        
-        this.statsIcon = [
-            'W WWW',
-            '     ',
-            'W WWW',
-            '     ',
-            'W WWW',
-        ]
-    }
-    
-    // implement gui
-    buildElements(){
-        let sc = global.screenCorners
-        let sr = global.screenRect
-        let m = .1
-        
-        // layout buttons at top of screen
-        let topRow = [sc[0].x,sc[0].y, (sc[2].x-sc[0].x), m]
-        let topLeft = [sr[0],sr[1],m,m]
-        let topRight = [sc[2].x-m,sr[1],m,m]
-        let topClp = [sr[0]+sr[2]*.1,sr[1]+m/4]
-        let topCenterP = [sr[0]+sr[2]*.4,topClp[1]]
-        let topCrp = [sr[0]+sr[2]*.7,topClp[1]]
-        
-        // layout toolbar at bottom of screen
-        let mx = .2
-        let nbuttons = toolList.length
-        let padding = .005
-        let buttonWidth = m-padding*2
-        let rowHeight = buttonWidth + padding*2
-        let rowWidth = buttonWidth*nbuttons + padding*(nbuttons+1)
-        let brow = [sr[0]+sr[2]/2-rowWidth/2,sr[1]+sr[3]-rowHeight, rowWidth, rowHeight]
-        let slots = []
-        for( let i = 0 ; i < nbuttons ; i++ ){
-            slots.push([brow[0]+padding+i*(buttonWidth+padding),brow[1]+padding,buttonWidth,buttonWidth])
         }
         
-        
-        // build top hud
-        let result = [
-            {
-                // stats button
-                rect: topLeft,
-                draw: g => this.drawButtonWithIcon(g,topLeft,this.statsIcon), //gui.js
-                click: stats, //game_states.js
-            },
-            {
-                // quick total falling display
-                rect: null,
-                draw: g => this.drawStatReadout( //gui.js
-                                g,topClp,this.rainIcon,
-                                global.nParticles.toString()),
-                click: null, //game_states.js
-            }, 
-            {
-                // quick catch rate (%) display
-                rect: null,
-                draw: g => this.drawStatReadout( //gui.js
-                                g,topCenterP,this.catchIcon,
-                                Math.floor(100*(global.grabbedParticles.size/global.nParticles)).toString()+'%'),
-                click: null, //game_states.js
-            },      
-            {
-                // quick total collected display
-                rect: null,
-                draw: g => this.drawStatReadout( //gui.js
-                                g,topCrp,this.collectedIcon,
-                                global.particlesCollected.toString()),
-                click: null, //game_states.js
-            },       
-            {
-                // options button
-                rect: topRight,
-                draw: g => this.drawButtonWithIcon(g,topRight,this.pauseIcon), //gui.js
-                click: pause, //game_states.js
+        // check if in any passive grab radius
+        global.allPois.some( poi => {
+            if( poi.pos.sub(p).getD2() < poi.md2 ){ 
+                poi.md2 += global.poiGrowthRate 
+                if( poi.md2 > global.poiMaxArea ) poi.md2 = global.poiMaxArea
+                global.grabbedParticles.add(i)
+                return true
             }
-        ]
+        })
         
-        // build toolbar buttons
-        for( let i = 0 ; i < toolList.length ; i++ ){
-            result.push({
-                rect: slots[i],
-                draw: g => {
-                    this.drawButton(g,slots[i])//gui.js
-                    
-                    // check if selected
-                    if( i == global.selectedToolIndex ){
-                        let outer  = slots[i]
-                        let m = .005
-                        let inner = [outer[0]+m,outer[1]+m,outer[2]-2*m,outer[3]-2*m]
-                        this.drawButton(g,inner)
-                    }
-                    
-                    // draw icon inside button
-                    toolList[i].drawToolbarIcon(g,slots[i])
-                }, 
-                click: function(){ global.selectedToolIndex = i }, 
-            })
+    }
+    lastDrawTime = global.t
+    
+    // draw released particles
+    resetRand()
+    let passed_offscreen_count = 0
+    global.activeReleasePatterns.forEach(rp => {
+        passed_offscreen_count += rp.draw(ctx,global.t)
+        
+        //check if in mouse grab radius
+        let p = v(x,y)
+        let d2 = global.mousePos.sub(p).getD2()
+        if( d2 < md2 ){
+            if( !global.particlesInGrabRange.has(i) ){
+                global.particlesInGrabRange.add(i)
+            }
         }
         
-        return result
-    }
-}
-
-
-class StatsMenu extends Gui {
-    
-    // implement gui
-    buildElements(){
-        let sc = global.screenCorners
-        let m = .4
-        let bigCenterRect = [sc[0].x+m,sc[0].y+m, (sc[2].x-sc[0].x)-2*m, (sc[2].y-sc[0].y)-2*m]
-        return [
-            {
-                // resume button
-                rect: bigCenterRect,
-                draw: g => this.drawButton(g,bigCenterRect,'STATS'),//gui.js
-                click: play, //game_states.js
-            }
-        ]
-    }
-}
-
-
-
-class PauseMenu extends Gui {
-    
-    // implement gui
-    buildElements(){
-        let sc = global.screenCorners
-        let sr = global.screenRect
+    })
         
-        // layout a column of wide buttons in the middle of the screen
-        let pad = .005
-        let w = .4
-        let h = .1
-        let n = 4
-        let th = h*n + pad*(n-1)
-        let x = sr[0]+sr[2]/2-w/2
-        let y = sr[1]+sr[3]/2-th/2
-        let slots = []
-        for( let i = 0 ; i < n ; i++ )
-            slots.push([x,y+i*(h+pad),w,h])
-        
-        
-        return [
-            {
-                // resume button
-                rect: slots[0],
-                draw: g => this.drawButton(g,slots[0],'RESUME'),//gui.js
-                click: resume, //game_states.js
-            },
-            {
-                // quit button
-                rect: slots[1],
-                draw: g => this.drawButton(g,slots[1],'QUIT'),//gui.js
-                click: quit, //game_states.js
-            }
-        ]
-    }
-}
-
-
-class Vector {
+    // given the total number of released particles 
+    // that just passed off-screen,
+    // add to ongoing rain
+    for( let i = 0 ; i < passed_offscreen_count ; i++ )
+        global.grabbedParticles.add(global.nParticles+i)
+    global.nParticles += passed_offscreen_count
     
-    constructor(x,y){
-        this.x = x
-        this.y = y
-    }
     
-    static polar(angle,magnitude){
-        var x = magnitude*Math.cos(angle)
-        var y = magnitude*Math.sin(angle)
-        return new Vector(x,y)
-    }
+    // draw pois
+    resetRand()
+    global.allPois.forEach( p => p.draw(ctx) )
     
-    xy(){
-        return [this.x,this.y]
-    }
-    
-    copy(){
-        return new Vector(this.x,this.y)
-    }
-    
-    // rotate around origin
-    rotate(angle){
-        var cos = Math.cos(angle)
-        var sin = Math.sin(angle)
-        return new Vector( this.x*cos-this.y*sin, this.y*cos+this.x*sin )
-    }
-    
-    getAngle(){
-        return Math.atan2( this.y, this.x )
-    }
-    
-    getD2(){
-        return Math.pow(this.x,2) + Math.pow(this.y,2)
-    }
-    
-    getMagnitude(){
-        return Math.sqrt( this.getD2() )
-    }
-    
-    // get unit vector with same angle
-    normalize(){
-        return this.mul( 1.0/this.getMagnitude() )
-    }
-    
-    add( o ){
-        return new Vector( this.x+o.x, this.y+o.y )
-    }
-    
-    sub( o ){
-        return new Vector( this.x-o.x, this.y-o.y )
-    }
-    
-    mul( k ){
-        return new Vector( this.x*k, this.y*k )
-    }
-}
+    // draw gui
+    ctx.lineWidth = global.lineWidth
+    global.allGuis[global.gameState].draw(ctx)
 
-// shorthands
-var pi = Math.PI
-var pio2 = Math.PI/2
-var twopi = 2*Math.PI
-var sqrt2 = Math.sqrt(2)
-var phi = 1.618033988749894
-function v(){return new Vector(...arguments)}
-function vp(){return Vector.polar(...arguments)}
+    // draw cursor
+    let p = global.mousePos.xy()
+    let tool = toolList[global.selectedToolIndex]
+    ctx.fillStyle = global.backgroundColor
+    tool.drawCursor(ctx,p,.01)
+    ctx.fillStyle = global.lineColor
+    tool.drawCursor(ctx,p,0)
 
-function rectCenter(x,y,w,h){
-    return [x+w/2,y+h/2]
-}
-
-function padRect(x,y,w,h,p){
-    return [x-p,y-p,w+2*p,h+2*p]
-}
-
-function inRect(p,x,y,w,h){
-    return (p.x>=x) && (p.x<=(x+w)) && (p.y>=y) && (p.y<=(y+h))
-}
-
-function randRange(min,max){
-    return min + rand()*(max-min)
-}
-
-function randChoice(options){
-    return options[Math.floor( Math.random() * options.length )]
-}
-
-function cleanAngle(a){
-    a = nnmod(a,twopi)
-    if( a > Math.PI ){
-        a -= twopi
-    }
-    if( a < -Math.PI ){
-        a += twopi
-    }
-    return a        
-}
-
-// oscillate from 0 to 1
-function pulse(period,offset=0){
-    return (Math.sin(offset + global.t * twopi/period)+1)/2
-}
-
-//non-negative mod
-function nnmod(a,b){
-    var r = a%b
-    return (r>=0) ? r : r+b
-}
-
-// weighted avg
-function avg(a,b,r=.5){
-    return (a*(1.0-r)) + (b*r)
-}
-function va(a,b,r=.5){
-    return v(avg(a.x,b.x,r),avg(a.y,b.y,r))
-}
-function la(l1,l2,r){
-    return [va(l1[0],l2[0],r),va(l1[1],l2[1],r)]
-}
-
-function arePointsClockwise(p1,p2,p3,p4) {
-    const crossProduct = (p1[0] - p2[0]) * (p3[1] - p2[1]) - (p1[1] - p2[1]) * (p3[0] - p2[0]);
-    return crossProduct > 0;
-}
-
-
-// compute intersection point of two lines
-// the two lines are described by pairs of points
-// requires two lists, each containing 2 xy points
-function intersection( ab1, ab2 ){
-    var mb1 = mb(...ab1)
-    var mb2 = mb(...ab2)
-    
-    if( mb1.m == Infinity ){
-        var x = ab1[0].x
-        var y = mb2.m*x + mb2.b
-    } else if (mb2.m == Infinity ){
-        var x = ab2[0].x
-        var y = mb1.m*x + mb1.b
-    } else {
-        //m1*x+b1 = m2*x+b2
-        //m1*x-m2*x = b2-b1
-        //x = (b2-b1)/(m1-m2)
-        var x = (mb2.b-mb1.b)/(mb1.m-mb2.m)
-        var y = mb1.m*x + mb1.b
-    }
-    
-    return new Vector( x, y )
-}
-
-// compute slope and intercept
-// euclidean line with points a and b
-function mb(a,b){
-    var m = (b.y-a.y)/(b.x-a.x)
-    var b = a.y - m*a.x 
-    return {m:m,b:b}
-}
-
-// https://stackoverflow.com/a/2450976
-function shuffle(array) {
-  let currentIndex = array.length,  randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex > 0) {
-
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-}
-
-
-// 
-// provides functions resetRand() and rand()
-// 
-// https://stackoverflow.com/a/47593316
-//
-
-var seed = null;
-var rand = null;
-
-function randomString(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
-}
-
-function resetRand(hard=false){
-    if( hard || (seed==null) ){
-        seed = cyrb128(randomString(10));
-    }
-    rand = sfc32(seed[0], seed[1], seed[2], seed[3])
-}
-    
-function cyrb128(str) {
-    let h1 = 1779033703, h2 = 3144134277,
-        h3 = 1013904242, h4 = 2773480762;
-    for (let i = 0, k; i < str.length; i++) {
-        k = str.charCodeAt(i);
-        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
-        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
-        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
-        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
-    }
-    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
-    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
-    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
-    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-    return [(h1^h2^h3^h4)>>>0, (h2^h1)>>>0, (h3^h1)>>>0, (h4^h1)>>>0];
-}
-
-function sfc32(a, b, c, d) {
-    return function() {
-      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
-      var t = (a + b) | 0;
-      a = b ^ b >>> 9;
-      b = c + (c << 3) | 0;
-      c = (c << 21 | c >>> 11);
-      d = d + 1 | 0;
-      t = t + d | 0;
-      c = c + t | 0;
-      return (t >>> 0) / 4294967296;
-    }
-}
-
-
-class Poi {
-    constructor(p){
-        this.pos = p
-        this.vel = v(0,0)
-        this.md2 = global.poiStartArea
-        if( this.md2 > global.poiMaxArea ) this.md2 = global.poiMaxArea
-        
-        
-        this.pressure = 0 //0-1 increases when held by player
-        this.pressurePattern = null//instance of PressurePattern
-    }
-    
-    update(dt){
-        this.r = Math.sqrt(this.md2) // only allowed sqrt
-        
-        // push on-screen
-        var sc = global.screenCorners
-        if( this.pos.x < sc[0].x ) this.pos.x = sc[0].x
-        if( this.pos.x > sc[2].x ) this.pos.x = sc[2].x
-        if( this.pos.y < sc[0].y ) this.pos.y = sc[0].y
-        if( this.pos.y > sc[2].y ) this.pos.y = sc[2].y
-        
-        this.vel = this.vel.mul(1.0-dt*global.poiFriction)
-        this.pos = this.pos.add(this.vel.mul(dt))
-        
-        if( this.isHeld ){
-            
-            // build pressure
-            if( !this.pressurePattern ) this.pressurePattern = randomPressurePattern()
-            this.pressure = Math.min(1, this.pressure+dt*global.poiPressureBuildRate)
-            
-        } else if(this.pressure > 0) {           
-            
-            // release pressure
-            let p0 = this.pressure
-            let p1 = Math.max(0,this.pressure - dt*global.poiPressureReleaseRate)
-            let dp = p0-p1
-            this.pressure = p1
-            if( this.pressure == 0 ) this.pressurePattern = null
-            let n = Math.round( dp * this.md2 * global.poiParticlesReleased )
-            if( n > 0 ){
-                for( let i = 0 ; i < n ; i++ )
-                    global.grabbedParticles.add(global.nParticles+i)
-                global.nParticles += n
-                global.activeReleasePatterns.push(randomReleasePattern(n,...this.pos.xy(),this.r))
-            }
-
-        }
-        
-        // shrink gradually
-        if( !this.isHeld ) this.md2 -= dt*global.poiShrinkRate
-        return ( this.md2 > 0 )
-    }
-    
-    drawBuildCursor(g){
-        
-        let p = global.mousePos.xy()
-        
+    // debug draw mouse
+    if( false ){
+        let c = global.mousePos
+        g.strokeStyle = 'red'
         g.beginPath()
-        g.moveTo(...p)
-        g.arc(...p,this.r,0,twopi)
-        g.fill()
+        g.moveTo(c.x,c.y)
+        g.arc(c.x,c.y,global.mouseGrabRadius,0,twopi)
+        g.stroke()
     }
     
-    draw(g){
-        let p
-        if( (this.pressure > 0) && this.pressurePattern ){
-            // indicate pressure
-            let off = this.pressurePattern.getOffset(
-                                global.t,this.r,this.pressure)
-            p = this.pos.add(off)
-        } else {
-            p = this.pos
-        }
-        p = p.xy()
-        
-        let r = this.r
-        g.beginPath()
-        g.moveTo(...p)
-        g.arc(...p,r,0,twopi)
-        g.fill()
-        
-        
-        if( false ){
-            
-            // debug pressure level
-            g.fillStyle = global.backgroundColor
-            drawText(g,...p,this.pressure.toFixed(2).toString())
-            g.fillStyle = global.lineColor
-        }
-        
+    //debug
+    if( false && global.debug ){
+        drawText(ctx,.5,.5,global.debug)
+    }
+
+
+    if( false ){
+        //debug
+        // draw screen corners
+        var r = .1
+        ctx.fillStyle = 'red'
+        global.screenCorners.forEach(c => ctx.fillRect( c.x-r, c.y-r, 2*r, 2*r ))
+    }
+    
+    
+
+    // debug 
+    if( false ){
+        ctx.fillStyle = 'black'
+        ctx.font = ".001em Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(`${global.angleX.toFixed(2)},${global.angleY.toFixed(2)},${global.angleZ.toFixed(2)}`, .5,.5);
     }
 }
-
-
-// movement pattern to represent pressure building
-
-class PressurePattern {
-    constructor(){}
-    
-    //get xy for given pressure 0-1
-    getOffset(t,r, pressure) { throw new Error('not implemented') }
-}
-
-class SpinPressurePattern extends PressurePattern {
-    
-    //get xy for given pressure 0-1 for pois of radius r
-    getOffset(t,r, pressure) { 
-        return vp(
-            t*1e-2 + rand()*twopi,
-            r * pressure * .2
-        )
-    }
-}
-
-class ShakePressurePattern extends PressurePattern {
-    
-    constructor(){
-        super()
-    }
-    
-    //get xy for given pressure 0-1
-    getOffset(t,r, pressure) { 
-        return vp(
-            rand()*twopi,
-            r * pressure * 1e-1 * Math.sin(t*1e-2 + rand()*twopi)
-        )
-    }
-}
-
-let allPressurePatterns = [
-    new SpinPressurePattern(),
-    new ShakePressurePattern(),
-]
-
-
-function randomPressurePattern(){
-    return randChoice(allPressurePatterns)
-}
-
-
-// release procedural particles from a poi
-
-class ReleasePattern {
-    
-    constructor(n,x,y,r){
-        this.n = n // total number of particles
-        this.x = x
-        this.y = y
-        this.r = r
-        this.startTime = global.t
-    }
-    
-    // draw particles 
-    // released t ms ago
-    draw(g,t){ throw new Error('not implemented') }
-}
-
-class SimpleRingReleasePattern extends ReleasePattern{
-    
-    // draw released particles 
-    draw(g,t){ 
-        let speed = global.fallSpeed*5
-        t -= this.startTime - this.r/speed
-        let particle_radius = global.particle_radius
-        let n = this.n
-        let a0 = rand() * twopi
-        let da = twopi/n
-        let r = speed*t
-        
-        for( let i = 0 ; i < n ; i++ ){
-            let a = a0+da*i
-            let x = this.x+Math.cos(a)*r
-            let y = this.y+Math.sin(a)*r
-            g.fillRect( x-particle_radius, y-particle_radius, 2*particle_radius, 2*particle_radius )
-        }
-    }
-}
-
-
-
-function randomReleasePattern(...p){
-    return new SimpleRingReleasePattern(...p)
-}
-
-// a tool is an aelement of the quick bar
-// it determines the appearnace of the mouse cursor
-// and the click behavior
-
-class Tool{
-   
-    drawToolbarIcon(g,rect){ throw new Error("not implemented") }
-   
-    drawCursor(g,p){ throw new Error("not implemented") }
-   
-    mouseDown(){ throw new Error("not implemented") }
-    
-    update(dt){}
-    
-    mouseMove(){}
-    
-    mouseUp(){}
-}
-
-// default tool, collect raindrops, pressure/move pois
-
-class DefaultTool extends Tool{
-    
-    constructor(){
-        super()
-        
-        this.iconLayout = [
-            '#### ',
-            '###  ',
-            '#### ',
-            '# ###',
-            '   ##']
-            
-        //null or falsey -> mouse not being pressed
-        //Poi instance -> mouse pressed on poi
-        //otherwise -> mouse pressed on background
-        this.held = null 
-    }
-    
-    drawToolbarIcon(g,rect){ 
-        drawLayout(g,...rectCenter(...rect),this.iconLayout)
-    }
-   
-    drawCursor(g,p,pad){ 
-        if( this.held instanceof Poi ){
-            
-            //held on poi
-            drawLayout(g,...p,this.iconLayout,false,pad) 
-            
-            
-        } else if( this.held ){
-            
-            // held on background
-            // catching rain
-            let c = global.mousePos
-            g.beginPath()
-            g.moveTo(c.x+global.mouseGrabRadius,c.y)
-            g.arc(c.x,c.y,global.mouseGrabRadius,0,twopi)
-            g.stroke()
-            
-        } else {
-            drawLayout(g,...p,this.iconLayout,false,pad) 
-        }
-    }
-   
-    mouseDown(p){ 
-        // either grab the poi or start catching rain
-        this.held = global.allPois.find( poi => 
-            poi.pos.sub(p).getD2() < poi.md2 ) 
-        if(!this.held){
-            this.held = 'catching'
-        } else {
-            this.held.isHeld = true
-        }
-    }
-    mouseUp(p){ this.held = null }
-    
-    update(dt){
-        if( this.held instanceof Poi ){
-            
-            //held on poi
-            
-            // build pressure
-            let poi = this.held
-            poi.pressure = Math.min(1, poi.pressure+dt*global.poiPressureBuildRate)
-            
-            //apply force
-            let d = global.mousePos.sub(poi.pos)
-            let d2 = d.getD2()
-            if( d2 < 1e-4 ) return
-            let angle = d.getAngle()
-            
-            let accel = vp( angle, global.poiPlayerF/poi.md2 )
-            poi.vel = poi.vel.add(accel.mul(dt))
-            
-        } else if( this.held ){
-            
-            // held on background
-            // grab procedural particles
-            if( (this.held) && global.particlesInGrabRange ){ //draw.js
-                let grabbedCount = 0
-                global.particlesInGrabRange.forEach( i => {
-                    if( !global.grabbedParticles.has(i) ){
-                        global.grabbedParticles.add(i)
-                        grabbedCount += 1
-                        global.particlesCollected += 1
-                    }
-                })
-            }
-        }
-    }
-    
-}
-
-    
-
-
-
-class BuildTool extends Tool{
-    
-    constructor(){
-        super()
-        
-        this.iconLayout = [
-            ' www ',
-            'wwwww',
-            'wwwww',
-            'wwwww',
-            ' www '
-        ]
-    }
-    
-    drawToolbarIcon(g,rect){ 
-        drawLayout(g,...rectCenter(...rect),this.iconLayout)
-    }
-   
-    drawCursor(g,p){ 
-        drawLayout(g,...p,this.iconLayout) 
-    }
-   
-    mouseDown(){
-        if( global.allPois.length < global.maxPoiCount ){
-            global.allPois.push(new Poi(global.mousePos))
-        }
-        global.selectedToolIndex = 0
-    }
-    
-    mouseMove(){}
-    
-    mouseUp(){}
-}
-
-const toolList = [
-    new DefaultTool(),
-    new BuildTool(),
-]
 
 const GameStates = {
     startMenu: 0,
@@ -1297,18 +1473,52 @@ const GameStates = {
 }
 
 function rebuildGuis(){
-    global.allGuis = {
-        0: new StartMenu(),
-        1: new Hud(),
-        2: new StatsMenu(),
-        3: new PauseMenu(),
+    if( !global.allGuis ){
+        global.allGuis = [
+             new StartMenu(),
+             new Hud(),
+             new StatsMenu(),
+             new PauseMenu(),
+        ]
     }
+    global.allGuis.forEach(k => {
+        k.clickableElements = k.buildElements()
+    })
 }
 
+function hideWebsiteOverlays(){
+    let ids = ['navbar','source-link']
+    ids.forEach( id => {
+        let elem = document.getElementById(id)
+        if( elem ) elem.style.display = "none";
+    })
+}
+
+function showWebsiteOverlays(){
+    let ids = ['navbar','source-link']
+    ids.forEach( id => {
+        let elem = document.getElementById(id)
+        if( elem ) elem.style.display = "block";
+    })
+}
+
+// toggle the stats / upgrades menu overlay
+function toggleStats(){
+    if( global.gameState != GameStates.statsMenu ){
+        global.selectedToolIndex = 0
+        global.gameState = GameStates.statsMenu
+    } else {
+        global.selectedToolIndex = 0
+        global.gameState = GameStates.playing
+    }
+    
+}
+
+// go from pause menu back to game
 function resume(){
     global.selectedToolIndex = 0
     global.gameState = GameStates.playing
-    document.getElementById("navbar").style.display = "none";
+    hideWebsiteOverlays()
 }
 
 function play(){
@@ -1323,27 +1533,19 @@ function play(){
     resume()
 }
 
-function stats(){
-    
-    global.selectedToolIndex = 0
-    global.gameState = GameStates.statsMenu
-    document.getElementById("navbar").style.display = "none";
-}
-
 function pause(){
     global.selectedToolIndex = 0
     global.gameState = GameStates.pauseMenu
-    document.getElementById("navbar").style.display = "none";
+    hideWebsiteOverlays()
 }
 
 function quit(){
     global.selectedToolIndex = 0
     global.gameState = GameStates.startMenu
-    document.getElementById("navbar").style.display = "block";
+    showWebsiteOverlays()
     resetGame()
 }
 
-resetRand()
 
 const global = {
     
@@ -1421,129 +1623,6 @@ const global = {
     
 }
 
-
-let lastDrawTime = 0
-    
-// Render graphics
-function draw(fps, t) {
-    
-    var ctx = global.ctx
-    let g = ctx
-    var canvas = global.canvas
-    
-    // draw background
-    ctx.fillStyle = global.backgroundColor
-    ctx.fillRect( ...global.screenRect )
-    
-    // draw falling particles
-    ctx.fillStyle = global.lineColor
-    resetRand()
-    let n_particles = global.nParticles
-    let sc = global.screenCorners
-    let sr = global.screenRect
-    let anim_angle = global.t*1e-4
-    let particle_radius = global.particle_radius
-    let particle_wiggle = global.particle_wiggle
-    let md2 = global.mouseGrabMd2
-    global.particlesInGrabRange.clear()
-    for( var i = 0 ; i < n_particles ; i++ ){
-        var a = anim_angle + rand() * Math.PI*2
-        var r = randRange(0,particle_wiggle)
-        var x = sr[0] + rand() * sr[2] + r*Math.cos(a * Math.floor(rand()*10))
-        var yr = randRange(0,sr[3])
-        var rawy = global.fallSpeed*global.t+yr
-        var prawy = global.fallSpeed*lastDrawTime+yr
-        
-        // if this particle just looped, ungrab it
-        if( Math.floor( rawy / sr[3] ) != Math.floor( prawy / sr[3] ) ){
-            global.grabbedParticles.delete(i)
-        }
-        var y = sr[1] + nnmod( rawy, sr[3] ) //+ r*Math.sin(a)
-        
-        // check if currently grabbed
-        if( global.grabbedParticles.has(i) ) continue
-        
-        ctx.fillRect( x-particle_radius, y-particle_radius, 2*particle_radius, 2*particle_radius )
-        
-        //check if in mouse grab radius
-        let p = v(x,y)
-        let d2 = global.mousePos.sub(p).getD2()
-        if( d2 < md2 ){
-            if( !global.particlesInGrabRange.has(i) ){
-                global.particlesInGrabRange.add(i)
-            }
-        }
-        
-        // check if in any passive grab radius
-        global.allPois.some( poi => {
-            if( poi.pos.sub(p).getD2() < poi.md2 ){ 
-                poi.md2 += global.poiGrowthRate 
-                if( poi.md2 > global.poiMaxArea ) poi.md2 = global.poiMaxArea
-                global.grabbedParticles.add(i)
-                return true
-            }
-        })
-        
-    }
-    lastDrawTime = global.t
-    
-    // draw released particles
-    resetRand()
-    global.activeReleasePatterns.forEach(rp => {
-        rp.draw(ctx,global.t)
-    })
-    
-    // draw pois
-    resetRand()
-    global.allPois.forEach( p => p.draw(ctx) )
-    
-    // draw gui
-    ctx.lineWidth = global.lineWidth
-    global.allGuis[global.gameState].draw(ctx)
-
-    // draw cursor
-    let p = global.mousePos.xy()
-    let tool = toolList[global.selectedToolIndex]
-    ctx.fillStyle = global.backgroundColor
-    tool.drawCursor(ctx,p,.01)
-    ctx.fillStyle = global.lineColor
-    tool.drawCursor(ctx,p,0)
-
-    // debug draw mouse
-    if( false ){
-        let c = global.mousePos
-        g.strokeStyle = 'red'
-        g.beginPath()
-        g.moveTo(c.x,c.y)
-        g.arc(c.x,c.y,global.mouseGrabRadius,0,twopi)
-        g.stroke()
-    }
-    
-    //debug
-    if( false && global.debug ){
-        drawText(ctx,.5,.5,global.debug)
-    }
-
-
-    if( false ){
-        //debug
-        // draw screen corners
-        var r = .1
-        ctx.fillStyle = 'red'
-        global.screenCorners.forEach(c => ctx.fillRect( c.x-r, c.y-r, 2*r, 2*r ))
-    }
-    
-    
-
-    // debug 
-    if( false ){
-        ctx.fillStyle = 'black'
-        ctx.font = ".001em Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(`${global.angleX.toFixed(2)},${global.angleY.toFixed(2)},${global.angleZ.toFixed(2)}`, .5,.5);
-    }
-}
-
 function keyDown(event){
   if (event.key === "Escape") {
     pause()
@@ -1590,7 +1669,7 @@ function mouseDown(e){
     // trigger clickable gui
     let gui = global.allGuis[global.gameState]
     let clickedGui = gui.clickableElements.some( e => 
-        e.rect && inRect(global.mousePos,...e.rect) && !e.click() )
+        e.rect && vInRect(global.mousePos,...e.rect) && !e.click() )
     if( clickedGui ) return
     
     // or trigger selected tool
@@ -1606,6 +1685,87 @@ function mouseUp(e){
     
     global.allPois.forEach(p => p.isHeld = false )
 }
+
+let allPressurePatterns = [
+    new SpinPressurePattern(),
+    new ShakePressurePattern(),
+]
+
+
+function randomPressurePattern(){
+    return randChoice(allPressurePatterns)
+}
+
+
+
+function randomReleasePattern(...p){
+    return new SimpleRingReleasePattern(...p)
+}
+
+// 
+// provides functions resetRand() and rand()
+// 
+// https://stackoverflow.com/a/47593316
+//
+
+var seed = null;
+var rand = null;
+
+function randomString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
+function resetRand(hard=false){
+    if( hard || (seed==null) ){
+        seed = cyrb128(randomString(10));
+    }
+    rand = sfc32(seed[0], seed[1], seed[2], seed[3])
+}
+    
+function cyrb128(str) {
+    let h1 = 1779033703, h2 = 3144134277,
+        h3 = 1013904242, h4 = 2773480762;
+    for (let i = 0, k; i < str.length; i++) {
+        k = str.charCodeAt(i);
+        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+    }
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    return [(h1^h2^h3^h4)>>>0, (h2^h1)>>>0, (h3^h1)>>>0, (h4^h1)>>>0];
+}
+
+function sfc32(a, b, c, d) {
+    return function() {
+      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+      var t = (a + b) | 0;
+      a = b ^ b >>> 9;
+      b = c + (c << 3) | 0;
+      c = (c << 21 | c >>> 11);
+      d = d + 1 | 0;
+      t = t + d | 0;
+      c = c + t | 0;
+      return (t >>> 0) / 4294967296;
+    }
+}
+
+
+const toolList = [
+    new DefaultTool(),
+    new BuildTool(),
+]
 
 
 
