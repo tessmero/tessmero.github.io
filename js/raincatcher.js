@@ -978,7 +978,7 @@ class Poi {
             if( !this.pressurePattern ) this.pressurePattern = randomPressurePattern()
             this.pressure = Math.min(1, this.pressure+dt*global.poiPressureBuildRate)
             
-        } else if(this.pressure > 0) {
+        } else if(this.pressure > 0) {           
             
             // release pressure
             let p0 = this.pressure
@@ -986,7 +986,7 @@ class Poi {
             let dp = p0-p1
             this.pressure = p1
             if( this.pressure == 0 ) this.pressurePattern = null
-            let n = Math.floor( dp * this.md2 * global.poiParticlesReleased )
+            let n = Math.round( dp * this.md2 * global.poiParticlesReleased )
             if( n > 0 ){
                 for( let i = 0 ; i < n ; i++ )
                     global.grabbedParticles.add(global.nParticles+i)
@@ -1518,6 +1518,11 @@ function draw(fps, t) {
         g.arc(c.x,c.y,global.mouseGrabRadius,0,twopi)
         g.stroke()
     }
+    
+    //debug
+    if( false && global.debug ){
+        drawText(ctx,.5,.5,global.debug)
+    }
 
 
     if( false ){
@@ -1658,15 +1663,17 @@ function init() {
     var cvs = document.getElementById("gameCanvas");
       cvs.style.width='100%';
       cvs.style.height='100%';  
-    cvs.addEventListener("mousemove", mouseMove);
-    cvs.addEventListener("mousedown", mouseDown);
-    cvs.addEventListener("mouseup", mouseUp);
-    cvs.addEventListener("touchstart", mouseDown);
-    cvs.addEventListener("touchend", mouseUp);   
+    cvs.addEventListener("mousemove", function(e){global.debug='MM',mouseMove(e)});
+    cvs.addEventListener("mousedown", function(e){global.debug='MD',mouseDown(e)});
+    cvs.addEventListener("mouseup", function(e){global.debug='MU',mouseUp(e)});
+    cvs.addEventListener("touchstart", function(e){global.debug='TS',mouseDown(e)}, false);
+    cvs.addEventListener('touchend', function(e){global.debug='TE',mouseUp(e)}, false );
+    cvs.addEventListener('touchcancel', function(e){global.debug='TC',mouseUp(e)}, false );
     
     // https://stackoverflow.com/a/63469884
     var previousTouch;
     cvs.addEventListener("touchmove", (e) => {
+        global.debug = 'TM'
         const touch = e.touches[0];
         mouseMove({
             clientX: touch.pageX,
@@ -1677,6 +1684,9 @@ function init() {
     
     document.addEventListener("keydown", keyDown )
     
+    document.querySelector('body').addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+    })
     global.canvas = cvs
     global.ctx = cvs.getContext("2d");
     
