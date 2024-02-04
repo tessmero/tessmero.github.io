@@ -76,7 +76,8 @@ function padRect(x,y,w,h,p){
 }
 
 function vInRect(p,x,y,w,h){
-    return (p.x>=x) && (p.x<=(x+w)) && (p.y>=y) && (p.y<=(y+h))
+    let result = (p.x>=x) && (p.x<=(x+w)) && (p.y>=y) && (p.y<=(y+h))   
+    return result
 }
 
 function inRect(px,py,x,y,w,h){
@@ -195,11 +196,45 @@ class Gui {
     draw(g){
         this.clickableElements.forEach(e => e.draw(g))
     }
+    
+    update(){
+        this.clickableElements.forEach(e => e.update())
+    }
 }
 
 class GuiElement {
 
-    constructor(){}
+    constructor(rect){
+        this.rect = rect
+        this.hoverable = true
+    }
+    
+    // set text to appear on hover
+    withTooltip(s){
+        this.tooltip = s
+        return this
+    }
+    
+    withDynamicTooltip(f){
+        this.tooltipFunc = f
+        return this
+    }
+
+    update(){
+        
+        // check if mouse is in this element's rectangle
+        this.hovered = (this.hoverable && vInRect(global.mousePos,...this.rect))
+        
+        if( this.hovered && (this.tooltipFunc || this.tooltip) ){
+            
+            if( this.tooltipFunc ) this.tooltip = this.tooltipFunc()
+            
+            // build new tooltip gui element
+            let anchorPoint = TooltipPopup.pickMouseAnchorPoint()
+            let rect = TooltipPopup.pickTooltipRect(anchorPoint,this.tooltip)
+            global.tooltipPopup = new TooltipPopup(rect,this.tooltip)
+        }
+    }
 
     draw(g){
         throw new Error(`Method not implemented in ${this.constructor.name}.`);
@@ -343,8 +378,6 @@ class ReleasePattern {
 
 class Tool{
    
-    getToolbarIcon(){ throw new Error("not implemented") }
-   
     drawCursor(g,p){ throw new Error("not implemented") }
    
     mouseDown(){ throw new Error("not implemented") }
@@ -370,6 +403,8 @@ class BuildTool extends Tool{
             'wwwww',
             ' www '
         ]
+            
+        this.tooltip = 'build tool'
     }
     
     drawToolbarIcon(g,rect){ 
@@ -395,11 +430,10 @@ class BuildTool extends Tool{
 // abstract base class for typical rectangular buttons
 class Button extends GuiElement {
     constructor(rect,action){
-        super()
+        super(rect)
         
         this.rect = rect
         this.action = action
-        this.hoverable = true
     }
     
     click(){
@@ -408,15 +442,14 @@ class Button extends GuiElement {
     
     
     draw(g){
-        this.constructor._draw(g,this.rect,this.hoverable)
+        this.constructor._draw(g,this.rect,this.hovered)
     }
     
-    static _draw(g,rect,hoverable=true,fill=true)
+    static _draw(g,rect,hovered=false,fill=true)
     {
         let lineCol = global.lineColor
-        let labelCol = global.lineColor
         
-        if(this.hoverable && vInRect(global.mousePos,...rect)){
+        if(hovered){
             lineCol = 'white'
         }
         g.fillStyle = global.backgroundColor
@@ -440,6 +473,8 @@ class DefaultTool extends Tool{
             '#### ',
             '# ###',
             '   ##']
+            
+        this.tooltip = 'default tool'
             
         //null or falsey -> mouse not being pressed
         //Poi instance -> mouse pressed on poi
@@ -615,22 +650,27 @@ class Hud extends Gui {
         let result = [
         
             // stats button
-            new IconButton(topLeft,this.statsIcon,toggleStats), //game_state.js
+            new IconButton(topLeft,this.statsIcon,toggleStats) //game_state.js
+                .withTooltip('show stats / upgrades'),
             
             // particles on screen
             new StatReadout(topClp,this.rainIcon,() => 
-                global.nParticles.toString()),
+                global.nParticles.toString())
+                .withTooltip('max raindrops on-screen'),
             
             // catch rate %
             new StatReadout(topCenterP,this.catchIcon,() => 
-                Math.floor(100*(global.grabbedParticles.size/global.nParticles)).toString()+'%'),
+                Math.floor(100*(global.grabbedParticles.size/global.nParticles)).toString()+'%')
+                .withDynamicTooltip(() => `caught ${global.grabbedParticles.size} / ${global.nParticles} raindrops`),
                 
             // total caught
             new StatReadout(topCrp,this.collectedIcon,() => 
-                global.particlesCollected.toString()),
+                global.particlesCollected.toString())
+                .withTooltip('total raindrops collected with default tool'),
             
             // pause button
-            new IconButton(topRight,this.pauseIcon,pause), //game_state.js
+            new IconButton(topRight,this.pauseIcon,pause) //game_state.js
+                .withTooltip('pause or quit the game'), 
         ]
         
         
@@ -638,6 +678,7 @@ class Hud extends Gui {
         for( let i = 0 ; i < toolList.length ; i++ ){
             result.push(
                 new ToolbarButton(slots[i],toolList[i].iconLayout,i)
+                    .withTooltip(toolList[i].tooltip)
             )
         }
         
@@ -790,9 +831,11 @@ class StartMenu extends Gui {
         for( let i = 0 ; i < n ; i++ )
             slots.push([x,y+i*(h+pad),w,h])
         
+        let textPad = .01 // padding around letters' pixels
+        
         return [
-            new TextLabel(slots[2],message),
-            new TextLabel(slots[3],'TO CATCH RAIN'),
+            new TextLabel(slots[2],message).withPad(textPad),
+            new TextLabel(slots[3],'TO CATCH RAIN').withPad(textPad),
             new TextButton(slots[8],'PLAY',play),  //game_state.js
         ]
     }
@@ -808,6 +851,7 @@ class StatsMenu extends Gui {
         let bigCenterRect = [sc[0].x+m,sc[0].y+m, (sc[2].x-sc[0].x)-2*m, (sc[2].y-sc[0].y)-2*m]
         return [
             new TextButton(bigCenterRect,'STATS',toggleStats)//game_states.js
+                .withTooltip('nothing to see here')
         ]
     }
 }
@@ -816,10 +860,22 @@ class StatsMenu extends Gui {
 // a line of unchanging on-screen text
 class TextLabel extends GuiElement {
     constructor(rect,label){
-        super()
+        super(rect)
         
         this.rect = rect
         this.label = label
+        this.scale = 1
+        this.pad = .005
+    }
+    
+    withScale(s){ 
+        this.scale = s
+        return this
+    }
+    
+    withPad(p){
+        this.pad = p
+        return this
     }
     
     // implement GuiElement
@@ -828,9 +884,9 @@ class TextLabel extends GuiElement {
         let label = this.label
         
         g.fillStyle = global.backgroundColor
-        drawText(g, ...rectCenter(...rect), label, true, .05)
+        drawText(g, ...rectCenter(...rect), label, true, this.pad, this.scale)
         g.fillStyle = global.lineColor
-        drawText(g, ...rectCenter(...rect), label, true, 0)
+        drawText(g, ...rectCenter(...rect), label, true, 0, this.scale)
     }
     
     // implement GuiElement
@@ -839,18 +895,106 @@ class TextLabel extends GuiElement {
     }
 }
 
+// a rectangle of text that appears on top of all other elements
+// considered static/immutable
+class TooltipPopup extends GuiElement {
+    constructor(rect,label){
+        super(rect)
+        
+        this.scale = TooltipPopup.scale()
+        this.rect = rect
+        this.label = label
+    }
+    
+    // override GuiElement (disable hover behavior)
+    update(){
+        //do nothing
+    }
+    
+    // implement GuiElement
+    draw(g){
+        let rect = this.rect
+        let label = this.label
+        
+        g.fillStyle = global.lineColor
+        drawText(g, ...rectCenter(...rect), label, true, .05, this.scale)
+        g.fillStyle = global.backgroundColor
+        drawText(g, ...rectCenter(...rect), label, true, 0, this.scale)
+    }
+    
+    // implement GuiElement
+    click(){
+        //do nothing
+    }
+    
+    static scale(){ return .5 }
+    
+    static pad(){ return .05 }
+    
+    // pick anchor point for pickTooltipRect
+    static pickMouseAnchorPoint(){
+        let p = global.mousePos
+        let sr = global.screenRect
+        let offset = .1
+        
+        if( p.x < (sr[0]+sr[2]/2) )
+            p = p.add(v(offset,0))
+        if( p.y < (sr[1]+sr[3]/2) ){
+            p = p.add(v(0,offset))
+        } else {
+            p = p.add(v(0,-TooltipPopup.pad()))
+        }
+        
+        return p
+    }
+    
+    // pick position for tooltip
+    static pickTooltipRect( anchorPoint, label ){
+        let [w,h] = getTextDims(label,TooltipPopup.scale())
+        let sr = global.screenRect
+        let ap = anchorPoint
+        
+        // pick x position
+        // start with center screen
+        let midx = sr[0]+sr[2]/2
+        let xr = midx-w/2
+        
+        // nudge x to include anchor point
+        if( xr>ap.x ) xr = ap.x
+        if( (xr+w)<ap.x ) xr = ap.x-w
+        
+        // pick y position
+        // start with center screen
+        let midy = sr[1]+sr[3]/2
+        let yr = midy-h/2
+        
+        // nudge y to include anchor point
+        if( yr>ap.y ) yr = ap.y
+        if( (yr+h)<ap.y ) yr = ap.y-h
+        
+        // return x,y,w,h
+        return [xr,yr,w,h]
+        
+    }
+}
+
 // a line of text that may change
 class DynamicTextLabel extends TextLabel {
     
     constructor(rect,labelFunc){
         super(rect,'')
-        this.labelFunc = labelFunc
+        this.labelFunc = function(){ return '  ' + labelFunc() }
     }
     
     draw(g){
         
         // get updated label
         this.label = this.labelFunc()
+        
+        // update bounding rectangle to fit label
+        let [w,h] = getTextDims(this.label, this.scale)
+        this.rect[2] = w+this.pad*2
+        this.rect[3] = h+this.pad*2
         
         super.draw(g)
     }
@@ -892,27 +1036,31 @@ class StatReadout extends DynamicTextLabel {
     constructor(rect,icon,labelFunc){
         super(rect,labelFunc)
         this.icon = icon
+        this.scale = this.constructor.scale()
     }
+    
+    update(){
+        
+        
+        
+        super.update()
+    }
+    
+    static scale(){ return .5 }
     
     // implement GuiElement
     draw(g){
         super.draw(g)
         
-        let scale = .5
-        let s = '  '+this.label // make space for icon on left
-        let xy = this.rect
-        
-        // clear surrounding rectangle
-        let rdims = getTextDims(s,scale)
-        let dims = padRect( ...xy, ...rdims, .005 )
-        g.fillStyle = global.backgroundColor
-        g.fillRect(...dims)
-        g.fillStyle = global.lineColor
-        
+        // draw icon
+        let xy = [this.rect[0]+this.pad,this.rect[1]+this.pad]
         let ch = charHeight
         let tps = global.textPixelSize 
-        drawLayout(g,xy[0],xy[1],this.icon,false,0,scale) //character.js
-        drawText(g,...xy, s,false,0,.5)
+        
+        g.fillStyle = global.backgroundColor
+        drawLayout(g,xy[0],xy[1],this.icon,false,this.pad,this.scale) //character.js
+        g.fillStyle = global.lineColor
+        drawLayout(g,xy[0],xy[1],this.icon,false,0,this.scale) //character.js
     }
 }
 
@@ -929,18 +1077,20 @@ class ToolbarButton extends IconButton {
     }
     
     draw(g){
-        Button._draw(g,this.rect,this.hoverable,true)
+        let hovered = super.draw(g)//Button._draw(g,this.rect,this.hoverable,true)
                     
         // check if selected
         if( this.indexInToolbar == global.selectedToolIndex ){
             let outer = this.rect
             let m = .005
             let inner = [outer[0]+m,outer[1]+m,outer[2]-2*m,outer[3]-2*m]
-            Button._draw(g,inner,this.hoverable,false)
+            Button._draw(g,inner,false,false)
         }
         
         // draw icon inside button
         drawLayout(g,...rectCenter(...this.rect),this.icon) //character.js
+        
+        return hovered
     }
 }
 
@@ -949,6 +1099,7 @@ var charHeight = 5
 
 // draw text centered at point xy
 function drawText(g,x,y,s,center=true,pad=0,scale=1){
+    s = s.toUpperCase()
     let cw = charWidth
     let ch = charHeight
     let tps = global.textPixelSize * scale 
@@ -1418,9 +1569,19 @@ function draw(fps, t) {
     resetRand()
     global.allPois.forEach( p => p.draw(ctx) )
     
+    // update gui hovering status and tooltip 
+    global.tooltipPopup = null
+    global.allGuis[global.gameState].update() // may set global.tooltipPopup
+    
     // draw gui
     ctx.lineWidth = global.lineWidth
-    global.allGuis[global.gameState].draw(ctx)
+    global.allGuis[global.gameState].draw(ctx) 
+
+    if( global.tooltipPopup ){
+        
+        // draw tooltip
+        global.tooltipPopup.draw(ctx)
+    }
 
     // draw cursor
     let p = global.mousePos.xy()
