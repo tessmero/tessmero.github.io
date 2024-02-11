@@ -20,6 +20,7 @@
         width:100%;
         height:100%;
         cursor:none;
+        background-color: #AAA;
     }    
     
     #source-link {
