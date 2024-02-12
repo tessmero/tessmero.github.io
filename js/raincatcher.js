@@ -2032,6 +2032,11 @@ function draw(fps, t) {
     let g = ctx
     var canvas = global.canvas
     
+    // limit radius slider for 20240211 demo
+    let lim = .005*5
+    if( global.particle_radius > lim ) global.particle_radius = lim
+    if( global.particle_radius < -lim ) global.particle_radius = -lim
+    
     // draw background
     //ctx.fillStyle = global.backgroundColor
     ctx.clearRect( ...global.screenRect )
