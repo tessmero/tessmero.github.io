@@ -7,7 +7,7 @@ import os
 home_page = 'raincatcher'
 
 all_pages = [
-    ['raincatcher',  'Rain Catcher',    True,   '20240407'],
+    ['raincatcher',  'Rain Catcher',    True,   '20240128', '20240407','idle'],
     ['loops',        'Loops',     False,   '20240115'],
     ['star',         'Star',      False,   '20240107'],
     ['grass',        'Grass',     True,   '20231203','20231211'],
@@ -137,8 +137,12 @@ for row in all_pages:
     row = list(row)
     if len(row)<5:
         row.append(row[-1])
+    reponame = row[0]
+    if( len(row) == 6 ): 
+        reponame = row[5]
+        row = row[:-1]
     row.append(f'<a href="{row[0]}.html">demo</a>')
-    row.append(f'<a href="https://github.com/tessmero/{row[0]}">source</a>')
+    row.append(f'<a href="https://github.com/tessmero/{reponame}">source</a>')
     row.pop(2)
     row.pop(0)
     content += "<tr>"
