@@ -7,7 +7,7 @@ import os
 home_page = 'raincatcher'
 
 all_pages = [
-    ['raincatcher',  'Rain Catcher',    True,   '20240331'],
+    ['raincatcher',  'Rain Catcher',    True,   '20240407'],
     ['loops',        'Loops',     False,   '20240115'],
     ['star',         'Star',      False,   '20240107'],
     ['grass',        'Grass',     True,   '20231203','20231211'],
