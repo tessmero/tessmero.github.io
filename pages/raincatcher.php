@@ -1,7 +1,7 @@
 
 <canvas id="gameCanvas">
 </canvas>
-<script src="js/raincatcher.js?v=20240519a"></script>
+<script src="js/raincatcher.js?v=20240519b"></script>
 
 <a id="source-link" href="https://github.com/tessmero/idle">source</a>
 
