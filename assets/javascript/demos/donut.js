@@ -1,0 +1,657 @@
+
+class Point {
+    constructor(){
+        this.children = [] // list of ChildPoint instances
+    }
+    
+    draw(g){
+        var c = this.pos
+        g.moveTo(c.x,c.y)
+        g.arc(c.x,c.y,.01,0,twopi)
+    }
+}
+
+// point defined by cartesian coordinates
+class ControlPoint extends Point{
+    constructor( pos,extremes ){  
+        super()    
+        
+        this.pos = pos
+        this.extremes = extremes
+        
+        // flag for transition 
+        // from user movement to auto movement
+        this.oldStart = null
+    }
+    
+    update(dt){        
+        if( this.extremes ){
+            let r = 0
+            if( this.useInnerFocus ) r = global.innerFocus
+            if( this.useOuterFocus ) r = global.outerFocus
+            
+            // check if finished transitioning
+            // from user movement to auto movement
+            if( this.oldStart && (r>=.5) ){
+                this.extremes[0] = this.oldStart
+                this.oldStart = null
+            }
+            
+            this.pos = va( this.extremes[0], this.extremes[1], r )
+        }
+    }
+}
+
+// point defined as midpoint between 2 points
+// along the arc of the given circle
+class ChildPoint extends Point{
+    
+    // all three params are indices in global circles/points
+    constructor( circle, a, b, ratio=.5 ){
+        super()
+        
+        this.circle = circle
+        this.a = a
+        this.b = b
+        this.ratio = ratio
+        
+        this.computePos()
+    }
+    
+    update(dt){
+        this.computePos()
+    }
+    
+    computePos(){
+        this.updated = true
+        
+          var xyr = global.allCircles[this.circle].xyr()
+          var cx = xyr[0]
+          var cy = xyr[1]
+          var r = xyr[2]
+          
+          var a = global.allPoints[this.a].pos
+          var b = global.allPoints[this.b].pos
+          
+          // Calculate the angles of the two points
+          let angle1 = Math.atan2(a.y - cy, a.x - cx);
+          let angle2 = Math.atan2(b.y - cy, b.x - cx);
+
+          // Calculate the angle difference
+          let angleDiff = angle2 - angle1;
+
+          // Ensure the shortest angle distance
+          if (angleDiff > Math.PI) {
+            angleDiff -= 2 * Math.PI;
+          } else if (angleDiff < -Math.PI) {
+            angleDiff += 2 * Math.PI;
+          }
+
+          // Find the weighted average angle
+          let midAngle = angle1 + this.ratio * angleDiff;
+          
+          this.pos = v( cx, cy ).add( vp( midAngle, r ) )
+    }
+}
+
+// circle defined by three points
+// a,b,c are indices of control points in global.allPoints
+class Circle {
+    constructor(a,b,c){
+        this.a = a
+        this.b = b
+        this.c = c
+    }
+    
+    xyr(){
+        
+        var a = global.allPoints[this.a].pos
+        var b = global.allPoints[this.b].pos
+        var c = global.allPoints[this.c].pos
+        
+        var xyr = constructCircle( 
+            a.x,a.y, 
+            b.x,b.y, 
+            c.x,c.y )
+            
+        return xyr
+    }
+    
+    draw(g){
+        
+        var xyr = this.xyr()
+        
+        g.moveTo( xyr[0]+xyr[2], xyr[1],  )
+        g.arc(  xyr[0], xyr[1], xyr[2], 0, twopi )
+    }
+    
+    
+}
+
+class Vector {
+    
+    constructor(x,y){
+        this.x = x
+        this.y = y
+    }
+    
+    static polar(angle,magnitude){
+        var x = magnitude*Math.cos(angle)
+        var y = magnitude*Math.sin(angle)
+        return new Vector(x,y)
+    }
+    
+    copy(){
+        return new Vector(this.x,this.y)
+    }
+    
+    // rotate around origin
+    rotate(angle){
+        var cos = Math.cos(angle)
+        var sin = Math.sin(angle)
+        return new Vector( this.x*cos-this.y*sin, this.y*cos+this.x*sin )
+    }
+    
+    getAngle(){
+        return Math.atan2( this.y, this.x )
+    }
+    
+    getMagnitude(){
+        return Math.sqrt( this.x*this.x + this.y*this.y )
+    }
+    
+    m2(){
+        return this.x*this.x + this.y*this.y;
+    }
+    
+    // get unit vector with same angle
+    normalize(){
+        return this.mul( 1.0/this.getMagnitude() )
+    }
+    
+    add( o ){
+        return new Vector( this.x+o.x, this.y+o.y )
+    }
+    
+    sub( o ){
+        return new Vector( this.x-o.x, this.y-o.y )
+    }
+    
+    mul( k ){
+        return new Vector( this.x*k, this.y*k )
+    }
+}
+
+// shorthands
+var pi = Math.PI
+var pio2 = Math.PI/2
+var twopi = 2*Math.PI
+function v(){return new Vector(...arguments)}
+function vp(){return Vector.polar(...arguments)}
+
+
+function getCircleIntersections(x1, y1, r1, x2, y2, r2) {
+    const d = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+    const a = (Math.pow(r1, 2) - Math.pow(r2, 2) + Math.pow(d, 2)) / (2 * d);
+    const h = Math.sqrt(Math.pow(r1, 2) - Math.pow(a, 2));
+
+    const x3 = x1 + a * (x2 - x1) / d;
+    const y3 = y1 + a * (y2 - y1) / d;
+
+    const offsetX = h * (y2 - y1) / d;
+    const offsetY = h * (x2 - x1) / d;
+
+    const intersection1 = v( x3 + offsetX,  y3 - offsetY );
+    const intersection2 = v( x3 - offsetX, y3 + offsetY );
+
+    return [intersection1, intersection2];
+}
+
+function segmentsIntersection(a1,a2,b1,b2) {
+    var x1 = a1.x
+    var y1 = a1.y
+    var x2 = a2.x
+    var y2 = a2.y
+    var x3 = b1.x
+    var y3 = b1.y
+    var x4 = b2.x
+    var y4 = b2.y
+    
+    // Calculate the cross products
+    const crossProduct1 = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+    const crossProduct2 = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+    const crossProduct3 = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3);
+
+    // Check if the line segments are not parallel
+    if (crossProduct3 !== 0) {
+        const t1 = crossProduct1 / crossProduct3;
+        const t2 = crossProduct2 / crossProduct3;
+
+        // Check if the intersection point is within the line segments
+        if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1) {
+            const intersectionX = x1 + t1 * (x2 - x1);
+            const intersectionY = y1 + t1 * (y2 - y1);
+
+            return v( intersectionX, intersectionY );
+        }
+    }
+
+    // Return null if there is no intersection
+    return null;
+}
+
+function randRange(min,max){
+    return min + rand()*(max-min)
+}
+
+function randInt(min,max){
+    return Math.floor(randRange(min,max))
+}
+
+function randSign(){
+    return rand() > .5 ? -1 : 1
+}
+
+function dist(a,b){
+    var dx = a[0]-b[0]
+    var dy = a[1]-b[1]
+    return Math.sqrt( dx*dx + dy*dy )
+}
+
+function va(a,b,r=.5){
+    return v(
+        a.x*(1-r)+b.x*r, 
+        a.y*(1-r)+b.y*r
+    )
+}
+
+function avg(a,b,r=.5){
+    return a*(1-r) + b*r
+}
+
+function avg2(a,b,r=.5){
+    return [
+        a[0]*(1-r) + b[0]*r,
+        a[1]*(1-r) + b[1]*r,
+    ]
+}
+
+//non negative modulo
+function nnmod(a,b){
+    var r = a%b
+    if( r<0 ) return r+b
+    return r
+}
+
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+  while (currentIndex > 0) {
+    randomIndex = Math.floor(rand() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+  return array;
+}
+
+function constructCircle(x1, y1, x2, y2, x3, y3) {
+const h = (
+        (x1 * x1 + y1 * y1) * (y2 - y3) +
+        (x2 * x2 + y2 * y2) * (y3 - y1) +
+        (x3 * x3 + y3 * y3) * (y1 - y2)
+    ) / (
+        2 * (x1 * (y2 - y3) - y1 * (x2 - x3) + x2 * y3 - x3 * y2)
+    );
+
+    const k = (
+        (x1 * x1 + y1 * y1) * (x3 - x2) +
+        (x2 * x2 + y2 * y2) * (x1 - x3) +
+        (x3 * x3 + y3 * y3) * (x2 - x1)
+    ) / (
+        2 * (x1 * (y2 - y3) - y1 * (x2 - x3) + x2 * y3 - x3 * y2)
+    );
+
+    const r = Math.sqrt((x1 - h) ** 2 + (y1 - k) ** 2);
+
+    return [h,k,r]
+}
+
+
+// 
+// provides functions resetRand() and rand()
+// 
+// https://stackoverflow.com/a/47593316
+//
+
+var seed = null;
+var rand = null;
+
+function randomString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
+function resetRand(hard=false){
+    if( hard || (seed==null) ){
+        seed = cyrb128(randomString(10));
+    }
+    rand = sfc32(seed[0], seed[1], seed[2], seed[3])
+}
+    
+function cyrb128(str) {
+    let h1 = 1779033703, h2 = 3144134277,
+        h3 = 1013904242, h4 = 2773480762;
+    for (let i = 0, k; i < str.length; i++) {
+        k = str.charCodeAt(i);
+        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+    }
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    return [(h1^h2^h3^h4)>>>0, (h2^h1)>>>0, (h3^h1)>>>0, (h4^h1)>>>0];
+}
+
+function sfc32(a, b, c, d) {
+    return function() {
+      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+      var t = (a + b) | 0;
+      a = b ^ b >>> 9;
+      b = c + (c << 3) | 0;
+      c = (c << 21 | c >>> 11);
+      d = d + 1 | 0;
+      t = t + d | 0;
+      c = c + t | 0;
+      return (t >>> 0) / 4294967296;
+    }
+}
+
+
+const global = {
+    // graphics context
+    canvas: null,
+    ctx: null,
+    
+    // relate pixels to virtual units
+    canvasOffsetX: 0,
+    canvasOffsetY: 0,
+    canvasScale: 0,
+
+    // mouse
+    canvasMousePos: v(0,0),     //pixels
+    mousePos: v(0,0),           //internal units
+
+    // 
+    backgroundColor: 'black',
+    lineColor: 'white',
+    lineWidth: .001,
+      
+    // state
+    t: 0, // total time elapsed
+    baseRad: .4,
+    allPoints: [], // ControlPoint instances
+    allCircles: [], // Circle instances
+    
+    //
+    innerFocus: 0, // state (float) bounces between 0 and 1
+    innerFocusPeriod: 20000, // duration of complete cycle
+    
+    //
+    outerFocus: 0, // state (float) bounces between 0 and 1
+    outerFocusPeriod: 31017, // duration of complete cycle
+    
+    // move automatically if no user input
+    autoMoveCountdown: 0,
+    autoMoveDelay: 1000,
+    
+    //debug
+    debugPoints: false,
+    debugMouse: false,
+}
+
+
+    
+    
+// Render graphics
+function draw(fps, t) {
+    var g = global.ctx
+    var canvas = global.canvas
+    g.fillStyle = global.backgroundColor
+    g.fillRect( 0, 0, 1, 1 )
+
+    // draw circles
+    g.strokeStyle = global.lineColor
+    g.lineWidth = global.lineWidth
+    g.beginPath()
+    global.allCircles.forEach( b => b.draw(g) )
+    g.stroke()
+    
+    
+    // debug draw corners
+    if( false ){
+        global.screenCorners.forEach( c => {
+            g.fillStyle = 'red'
+            g.beginPath()
+            g.moveTo(c.x,c.y)
+            g.arc(c.x,c.y,.1,0,twopi)
+            g.fill()
+        })
+    }
+
+    // debug draw mouse
+    if( global.debugMouse ){
+        let c = global.mousePos
+        g.fillStyle = 'red'
+        g.beginPath()
+        g.moveTo(c.x,c.y)
+        g.arc(c.x,c.y,.01,0,twopi)
+        g.fill()
+    }
+
+    //debug
+    if( global.debugPoints ){
+        g.fillStyle = 'red'
+        g.beginPath()
+        global.allPoints.forEach(p => p.draw(g))
+        g.fill()
+    }
+}
+
+function updateMousePos(event){
+    
+    
+    var rect = global.canvas.getBoundingClientRect();
+    var scaleX = global.canvas.width / rect.width;
+    var scaleY = global.canvas.height / rect.height;
+    
+    global.canvasMousePos = new Vector( 
+        (event.clientX - rect.left) * scaleX, 
+        (event.clientY - rect.top) * scaleY 
+    
+    )
+    global.mousePos = new Vector( 
+        (global.canvasMousePos.x-global.canvasOffsetX)/global.canvasScale, 
+        (global.canvasMousePos.y-global.canvasOffsetY)/global.canvasScale
+    )
+}
+
+function mouseMove(e){
+    updateMousePos(e)
+    
+    // apply user-set motion
+    global.autoMoveCountdown = global.autoMoveDelay
+    global.innerFocus = global.mousePos.x
+    global.outerFocus = global.mousePos.y
+    
+}
+
+function mouseClick(e){
+    updateMousePos(e)
+    
+    //global.debugPoint = global.mousePos
+    resetGame()
+}
+
+
+
+function update(dt) { 
+    global.t += dt
+
+    fitToContainer()  
+        
+    global.allPoints.forEach( b => b.update(dt) )
+    
+            
+    if( true ){
+        if( global.autoMoveCountdown > 0 ){
+            global.autoMoveCountdown -= dt
+            
+        } else {
+            
+            // main animation
+            let p = global.innerFocusPeriod
+            let pindex = Math.floor(global.t / p)
+            let r = (global.t % p) / p
+            global.innerFocus = Math.cos(r*twopi-pi)/2+.5
+            
+            p = global.outerFocusPeriod
+            pindex = Math.floor(global.t / p)
+            r = (global.t % p) / p
+            global.outerFocus = Math.cos(r*twopi-pi)/2+.5
+        }
+    }
+}
+
+
+
+var lastCanvasOffsetWidth = -1;
+var lastCanvasOffsetHeight = -1;
+function fitToContainer(){
+    
+    var cvs = global.canvas
+    if( (cvs.offsetWidth!=lastCanvasOffsetWidth) || (cvs.offsetHeight!=lastCanvasOffsetHeight) ){
+        
+      cvs.width  = cvs.offsetWidth;
+      cvs.height = cvs.offsetHeight;
+        
+        var dimension = Math.max(cvs.width, cvs.height);
+        global.canvasScale = dimension;
+        global.canvasOffsetX = (cvs.width - dimension) / 2;
+        global.canvasOffsetY = (cvs.height - dimension) / 2;
+    global.ctx.setTransform(global.canvasScale, 0, 0, 
+        global.canvasScale, global.canvasOffsetX, global.canvasOffsetY);
+        
+        var xr = -global.canvasOffsetX / global.canvasScale
+        var yr = -global.canvasOffsetY / global.canvasScale
+        global.screenCorners = [v(xr,yr),v(1-xr,yr),v(1-xr,1-yr),v(xr,1-yr)]
+        global.screenCenter = v(.5,.5)
+    }
+}
+
+
+
+// Initialize the game
+function init() {
+    var cvs = document.getElementById("gameCanvas");
+    cvs.addEventListener("mousemove", mouseMove);
+    
+    // https://stackoverflow.com/a/63469884
+    var previousTouch;
+    cvs.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        mouseMove({
+            clientX: touch.pageX,
+            clientY: touch.pageY
+        })
+        e.preventDefault()
+    });
+    
+    
+    global.canvas = cvs
+    global.ctx = cvs.getContext("2d");
+    
+    
+    resetRand() // math/rng.js
+    fitToContainer()
+    resetGame()
+    requestAnimationFrame(gameLoop);
+}
+
+
+function resetGame(){
+    resetRand()
+    global.autoResetCountdown = global.autoResetDelay
+    
+    global.allCircles = []
+    global.allPoints = []
+    
+    var baseRad = global.baseRad
+    
+    var n = 70
+    var dangle = twopi / n
+    for( var i = 0 ; i < n ; i++ ){
+        let angle = dangle*i
+        
+        let pos = global.screenCenter.add(vp(angle+pio2,baseRad))
+        let endPos = global.screenCenter.add(vp(angle+pio2,baseRad/9))
+        let b = new ControlPoint(pos,[pos,endPos])
+        b.useOuterFocus = true
+        let c = new ControlPoint(global.screenCenter.add(vp(angle-pio2,baseRad)))
+        
+        global.allPoints.push(b,c)
+        let j = global.allPoints.length
+        var bases = [j-1,j-2]
+        
+        pos = global.screenCenter.sub(vp(angle,baseRad*2))
+        endPos = global.screenCenter.sub(vp(angle,baseRad/8))
+        let extremes = [pos,endPos]
+        
+        let controlPoint = new ControlPoint(pos,extremes)
+        controlPoint.useInnerFocus = true
+        global.allPoints.push(controlPoint)
+        let cop = global.allPoints.length-1
+        global.allCircles.push(new Circle( bases[0], bases[1], cop ))
+    }
+    
+}
+
+// Main game loop
+let secondsPassed;
+let oldTimeStamp;
+let fps;
+
+function gameLoop(timeStamp) {
+    
+    var msPassed = 0;
+    if (oldTimeStamp) {
+      msPassed = timeStamp - oldTimeStamp;
+    }
+    var secondsPassed = msPassed / 1000;
+    oldTimeStamp = timeStamp;
+    var fps = Math.round(1 / secondsPassed);
+
+
+    msPassed = Math.min(msPassed,50)
+
+    update(msPassed);
+    draw(fps);
+
+    requestAnimationFrame(gameLoop);
+}
+
+
+// Initialize the game
+init();
+
+

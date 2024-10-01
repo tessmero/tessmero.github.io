@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+
+  <body>
+
+    {%- include header.html -%}
+  <script>
+    document.querySelectorAll('.nav-item.{{page.slug}}').forEach(function(item) {
+    item.classList.add('active');
+});
+  </script>
+
+          {{ content }}
+
+    <script src="{{ '/assets/javascript/demos/' | append: page.slug | append: '.js' }}?v={{ page.last_updated }}"></script>
+
+
+<a id="source-link" style="cursor:pointer">about</a>
+
+
+<div id="info-footer" style="display: flex; justify-content: space-between;">
+    <span>{{ page.title }}</span>
+  <span>
+
+
+    {% for techname in page.techs %}
+      {% assign tech = site.techs | where: "slug", techname | first %}
+
+    <a href="{{ tech.url }}" class="btn btn-outline-dark tag-btn">
+        <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.title }}
+    </a>
+    {% endfor %}
+
+</span>
+
+  <span>
+    <a href="mailto:oliver.tessmer@gmail.com" style="color:white">contact</a>
+  </span>
+
+</div>
+
+<style>
+    
+    #source-link {
+        font-size:10px;
+        position: fixed;
+        z-index: 999;
+        bottom: 0px;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        background-color: black;
+        color: white !important;
+        padding: 2px;
+        
+        -webkit-touch-callout:none;
+        -webkit-user-select:none;
+        -khtml-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+        -webkit-tap-highlight-color:rgba(0,0,0,0);
+    }
+
+    #info-footer {
+        position: fixed;
+        bottom: -100px; /* Hidden by default */
+        left: 0;
+        width: 100%;
+        background-color: #AAA;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        padding-bottom: 20px;
+        transition: bottom 0.5s ease;
+        z-index: 998;
+    }
+
+    #info-footer.show {
+        bottom: 0; /* Expand from the bottom */
+    }
+</style>
+
+<script>
+    const infoBtn = document.getElementById('source-link');
+    const infoFooter = document.getElementById('info-footer');
+
+    infoBtn.addEventListener('click', () => {
+        infoFooter.classList.toggle('show');
+    });
+    
+// Hide the footer when clicking outside of it
+document.addEventListener('click', function(event) {
+  const infoFooter = document.getElementById('info-footer');
+  const infoButton = document.getElementById('source-link');
+
+  // Check if the click is outside the info-footer and info-btn
+  if (!infoFooter.contains(event.target) && !infoButton.contains(event.target)) {
+        infoFooter.classList.remove('show')
+  }
+});
+</script>
+  </body>
+
+</html>
+
+
+

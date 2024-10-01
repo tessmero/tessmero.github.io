@@ -1,0 +1,59 @@
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$( document ).ready(function(){
+$('#demo_list').DataTable({
+order: [[2, 'desc']],
+columnDefs: [
+{
+target: 0,
+width: '150px',
+orderable: true,
+},
+]
+});
+})
+</script>
+<div class="row" style="margin-top:0px;">
+<div class="mx-auto col-lg-10 col-md-10 col-sm-12">
+<table id="demo_list" class="display">
+<thead>
+<tr>
+<th>Demo</th>
+<th>Date</th>
+<th>Last Updated</th>
+<th>Techs</th>
+</tr>
+</thead>
+<tbody>
+
+
+{% for demo in site.demos %}
+<tr>
+<td>
+  <a href="{{ demo.url }}" class="btn btn-outline-dark tag-btn">
+        <span class="fa fa-play" aria-hidden="true"></span> {{ demo.title }}
+    </a>
+  </td>
+<td>{{demo.date | date: "%Y%m%d" }}</td>
+<td>{{demo.last_updated}}</td>
+<td>
+  
+    {% for techname in demo.techs %}
+      {% assign tech = site.techs | where: "slug", techname | first %}
+
+    <a href="{{ tech.url }}" class="btn btn-outline-dark tag-btn">
+        <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.shortTitle }}
+    </a>
+    {% endfor %}
+
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+</div>
+</div>

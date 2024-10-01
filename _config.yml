@@ -1,0 +1,40 @@
+title: tessmero.github.io
+description: tessmero.github.io
+
+
+# Build settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+
+
+collections:
+  demos:
+    output: true
+    permalink: /:name
+  techs:
+    output: true
+
+# navigation bar with dropdowns
+header_pages:
+  - "_demos/wheely.md"
+  - "_demos/grove-tender.md"
+  - "_demos/fight-cub.md"
+  - "_demos/space-quest.md"
+  - "_demos/trees.md"
+  - "_demos/gawlf.md"
+  - "_demos/sketch.md"
+         
+  
+  
+
+
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - update_boostrap.sh

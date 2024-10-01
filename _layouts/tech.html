@@ -1,0 +1,46 @@
+---
+layout: default
+---
+<article>
+
+  <header>
+    <h2 style="color:#999;margin-top:20px;font-size:14px">Technique</h2>
+    <h2>{{ page.title | escape }}</h2>
+  </header>
+
+  <section>
+    {{ content }}
+  </section>
+
+<br>
+{{ page.title }} Demos:
+
+<br>
+<span>
+  {% for demo in site.demos %}
+    {% if demo.techs contains page.slug %}
+    <a href="{{ demo.url }}" class="btn btn-outline-dark tag-btn">
+        <span class="fa fa-play" aria-hidden="true"></span> {{ demo.title }}
+    </a>
+    {% endif %}
+  {% endfor %}
+</span>
+
+
+<br>
+<br>
+<br>
+Other Techs:
+<br>
+<span>
+  {% for tech in site.techs %}
+    {% unless tech == page %}
+    <a href="{{ tech.url }}" class="btn btn-outline-dark tag-btn">
+        <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.title }}
+    </a>
+    {% endunless %}
+  {% endfor %}
+</span>
+
+
+</article>

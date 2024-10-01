@@ -1,0 +1,30 @@
+name: Copy Index HTML
+
+on:
+  push:
+    branches:
+      - main  # Change to your default branch if it's not 'main'
+
+jobs:
+  copy-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Jekyll Site
+        uses: jekyll/jekyll-build@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy Existing Page to Index.html
+        run: |
+          cp _site/wheely.html _site/index.html
+          echo "Copied wheely.html to index.html"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
