@@ -21,7 +21,7 @@ jobs:
         run: |
           pwd
           ls _site
-          cp _site/wheely.html _site/index.html
+          sudo cp _site/wheely.html _site/index.html
           echo "Copied wheely.html to index.html"
 
       - name: Upload artifact
