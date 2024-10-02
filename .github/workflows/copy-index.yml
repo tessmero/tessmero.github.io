@@ -1,4 +1,4 @@
-name: Build Jekyll site
+name: Build Jekyll site then replace index.html
 on:
  push:
    branches: ["main"]
@@ -19,8 +19,6 @@ jobs:
         
       - name: Copy Existing Page to Index.html
         run: |
-          pwd
-          ls _site
           sudo cp _site/wheely.html _site/index.html
           echo "Copied wheely.html to index.html"
 
