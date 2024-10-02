@@ -3,8 +3,6 @@ layout: demo
 title: "Tile Game"
 date: 20230611
 last_updated: 20230611
-techs:
- - procedural-motion
 ---
 
 

@@ -3,8 +3,6 @@ layout: demo
 title: "Unicycle"
 date: 20230806
 last_updated: 20230806
-techs:
- - dynamic-sim
 ---
 
 
