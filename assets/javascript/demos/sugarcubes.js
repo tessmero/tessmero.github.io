@@ -329,10 +329,10 @@ function update(dt) {
 
 
 function leftClick(event){
-    if( gameState == GameState.ReadyForFirstClick ){
-        gameState = GameState.Sunny
-        currentChoreo = new SunupChoreo(allActors)
-    }
+  //  if( gameState == GameState.ReadyForFirstClick ){
+  //      gameState = GameState.Sunny
+  //      currentChoreo = new SunupChoreo(allActors)
+  //  }
 }
 
 
@@ -424,12 +424,12 @@ function draw(fps) {
     ctx.strokeRect( 0, y0, canvas.width, canvas.height)
     
     // draw click prompt
-    if( (gameState==GameState.ReadyForFirstClick) | (gameState==GameState.ReadyForSecondClick) ){
-        ctx.font = "25px Arial";
-        ctx.textAlign = "center";
-        ctx.fillStyle = "black";
-        ctx.fillText("Click Here", canvas.width/2, canvas.height/3);
-    }
+    // if( (gameState==GameState.ReadyForFirstClick) | (gameState==GameState.ReadyForSecondClick) ){
+    //     ctx.font = "25px Arial";
+    //     ctx.textAlign = "center";
+    //     ctx.fillStyle = "black";
+    //     ctx.fillText("Click Here", canvas.width/2, canvas.height/3);
+    // }
     
 
     // Draw FPS on the screen
