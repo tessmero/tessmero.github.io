@@ -19,7 +19,7 @@ jobs:
         
       - name: Copy Existing Page to Index.html
         run: |
-          cp _site/wheely.html _site/index.html
+          cp /github/workspace/_site/wheely.html /github/workspace/_site/index.html
           echo "Copied wheely.html to index.html"
 
       - name: Upload artifact
