@@ -65,7 +65,7 @@
 
     #info-footer {
         position: fixed;
-        bottom: -100px; /* Hidden by default */
+        bottom: -100%; /* Hidden by default */
         left: 0;
         width: 100%;
         background-color: #AAA;
@@ -83,12 +83,19 @@
 </style>
 
 <script>
+    
+    document.querySelector('canvas').addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+    }
+
     const infoBtn = document.getElementById('source-link');
     const infoFooter = document.getElementById('info-footer');
 
     infoBtn.addEventListener('click', () => {
         infoFooter.classList.toggle('show');
     });
+
+
     
 // Hide the footer when clicking outside of it
 document.addEventListener('click', function(event) {
