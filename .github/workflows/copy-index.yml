@@ -19,7 +19,7 @@ jobs:
         
       - name: Copy Existing Page to Index.html
         run: |
-          ls /github/workspace/_site
+          ls /github/workspace/
           cp /github/workspace/_site/wheely.html /github/workspace/_site/index.html
           echo "Copied wheely.html to index.html"
 
