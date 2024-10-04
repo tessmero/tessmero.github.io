@@ -2,7 +2,7 @@
 layout: demo
 title: "Grove Tender"
 date: 20240921
-last_updated: 20240921
+last_updated: 20241004
 techs:
   - idle-engine
   - procedural-motion
