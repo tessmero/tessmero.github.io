@@ -19,6 +19,7 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
+  - "_demos/orbital-launch.md"
   - "_demos/wheely.md"
   - "_demos/grove-tender.md"
   - "_demos/fight-cub.md"
@@ -27,7 +28,6 @@ header_pages:
   - "_demos/gawlf.md"
   - "_demos/sketch.md"
          
-  
   
 
 
