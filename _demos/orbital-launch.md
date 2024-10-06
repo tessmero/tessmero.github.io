@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Orbital Launch"
-date: 20241004
-last_updated: 20241004
+date: 20241006
+last_updated: 20241006
 techs: 
   - idle-engine
   - procedural-motion
