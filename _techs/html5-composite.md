@@ -6,6 +6,8 @@ shortTitle: 'HTML5 Composite'
 
 This technique encompasses a variety of layered rendering tricks that can be applied to a **single** HTML5 canvas.
 
+![composite animation](/assets/gifs/composite.gif)
+
 Main concepts:
 
 - **Dilate/erode** - solid shapes can be morphed and layered to form edges that would otherwise be hard to compute.
