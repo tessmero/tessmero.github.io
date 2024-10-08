@@ -2,7 +2,7 @@
 layout: demo
 title: "Space Quest"
 date: 20240907
-last_updated: 20240907
+last_updated: 20241008
 techs:
   - idle-engine
   - infinite-canvas
