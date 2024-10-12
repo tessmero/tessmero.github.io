@@ -19,6 +19,7 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
+  - "_demos/collide-o-scope.md"
   - "_demos/orbital-launch.md"
   - "_demos/wheely.md"
   - "_demos/grove-tender.md"
