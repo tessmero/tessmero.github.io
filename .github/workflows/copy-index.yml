@@ -19,8 +19,8 @@ jobs:
         
       - name: Copy Existing Page to Index.html
         run: |
-          sudo cp _site/collide-o-scope.html _site/index.html
-          echo "Copied collide-o-scope.html to index.html"
+          sudo cp _site/rail-layer.html _site/index.html
+          echo "Copied rail-layer.html to index.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
