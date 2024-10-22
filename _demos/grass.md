@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Grass"
-date: 20231203
-last_updated: 20231211
+date: 2023-12-03
+lastUpdated: 2023-12-11
 techs:
  - procedural-motion
  - procedural-world

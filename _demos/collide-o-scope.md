@@ -1,12 +1,14 @@
 ---
 layout: demo
 title: "Collide-o-Scope"
-date: 20241012
-last_updated: 20241012
+date: 2024-10-12
+lastUpdated: 2024-10-12
 techs: 
   - html5-composite
   - idle-engine
   - procedural-motion
+sound: true
+music: false
 ---
 
 

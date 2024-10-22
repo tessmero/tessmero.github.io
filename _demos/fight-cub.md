@@ -1,13 +1,15 @@
 ---
 layout: demo
 title: "Fight Cub"
-date: 20240914
-last_updated: 20240914
+date: 2024-09-14
+lastUpdated: 2024-09-14
 techs:
   - idle-engine
   - dynamic-sim
   - character-rig
   - procedural-motion
+sound: true
+music: true
 ---
 
 

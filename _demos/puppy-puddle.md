@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Puppy"
-date: 20230701
-last_updated: 2023070
+date: 2023-07-01
+lastUpdated: 2023070
 techs:
   - dynamic-sim
 ---

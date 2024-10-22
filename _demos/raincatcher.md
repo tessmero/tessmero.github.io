@@ -2,12 +2,12 @@
 layout: demo
 layout: demo
 title: "Rain Catcher"
-date: 20240128
-last_updated: 20240831
+date: 2024-01-28
+lastUpdated: 2024-08-31
 techs:
   - idle-engine
   - procedural-motion
-  - tailored-sim
+  - dynamic-sim
   - html5-composite
 ---
 

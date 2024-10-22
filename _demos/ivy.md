@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Ivy"
-date: 20231112
-last_updated: 20231112
+date: 2023-11-12
+lastUpdated: 2023-11-12
 techs:
  - html5-composite  
 ---

@@ -1,10 +1,10 @@
 ---
 layout: demo
 title: "Gears"
-date: 20231022
-last_updated: 20231022
+date: 2023-10-22
+lastUpdated: 2023-10-22
 techs:
- - tailored-sim
+ - dynamic-sim
 ---
 
 

@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Donut"
-date: 20231008
-last_updated: 20231008
+date: 2023-10-08
+lastUpdated: 2023-10-08
 techs:
  - procedural-motion
 ---

@@ -1,10 +1,14 @@
 ---
 layout: demo
 title: "Chess"
-date: 20240902
-last_updated: 20240908
+date: 2024-09-02
+lastUpdated: 2024-09-08
+changelog:
+  2024-09-08 Add quit and undo buttons
 techs:
   - idle-engine
+sound: true
+music: true
 ---
 
 

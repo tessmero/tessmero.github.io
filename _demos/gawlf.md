@@ -1,10 +1,10 @@
 ---
 layout: demo
 title: "Gawlf"
-date: 20230709
-last_updated: 20230709
+date: 2023-07-09
+lastUpdated: 2023-07-09
 techs:
- - tailored-sim
+ - dynamic-sim
 ---
 
 

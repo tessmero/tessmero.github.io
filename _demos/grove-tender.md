@@ -1,11 +1,15 @@
 ---
 layout: demo
 title: "Grove Tender"
-date: 20240921
-last_updated: 20241004
+date: 2024-09-21
+lastUpdated: 2024-10-04
+changelog:
+  2024-10-04 fix crash on (prog, select cmd 5, reset, prog)
 techs:
   - idle-engine
   - procedural-motion
+sound: true
+music: true
 ---
 
 

@@ -1,11 +1,10 @@
 ---
 layout: demo
 title: "Sand"
-date: 20230910
-last_updated: 20230910
+date: 2023-09-10
+lastUpdated: 2023-09-10
 techs:
   - procedural-motion
-  - tailored-sim
 ---
 
 

@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Sketch"
-date: 20230917
-last_updated: 20230917
+date: 2023-09-17
+lastUpdated: 2023-09-17
 techs:
   - html5-composite
 ---

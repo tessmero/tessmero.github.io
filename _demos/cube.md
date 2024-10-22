@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Cube"
-date: 20230827
-last_updated: 20230827
+date: 2023-08-27
+lastUpdated: 2023-08-27
 techs:
   - procedural-motion
 ---

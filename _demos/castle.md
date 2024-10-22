@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Castle"
-date: 20230730
-last_updated: 20230730
+date: 2023-07-30
+lastUpdated: 2023-07-30
 techs:
  - procedural-motion
  - procedural-world

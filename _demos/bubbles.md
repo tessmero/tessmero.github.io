@@ -1,10 +1,10 @@
 ---
 layout: demo
 title: "Bubbles"
-date: 20231001
-last_updated: 20231029
+date: 2023-10-01
+lastUpdated: 2023-10-29
 techs: 
-  - tailored-sim
+  - dynamic-sim
 ---
 
 

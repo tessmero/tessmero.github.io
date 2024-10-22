@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Clouds"
-date: 20230820
-last_updated: 20230820
+date: 2023-08-20
+lastUpdated: 2023-08-20
 techs:
   - html5-composite
   - dynamic-sim

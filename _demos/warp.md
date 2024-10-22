@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Warp"
-date: 20230625
-last_updated: 20230625
+date: 2023-06-25
+lastUpdated: 2023-06-25
 techs:
   - procedural-motion
 ---

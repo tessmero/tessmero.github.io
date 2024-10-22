@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Star"
-date: 20240107
-last_updated: 20240107
+date: 2024-01-07
+lastUpdated: 2024-01-07
 techs:
   - procedural-motion
   - html5-composite

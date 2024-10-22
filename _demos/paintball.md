@@ -1,10 +1,10 @@
 ---
 layout: demo
 title: "Paintball"
-date: 20230924
-last_updated: 20230924
+date: 2023-09-24
+lastUpdated: 2023-09-24
 techs:
- - tailored-sim
+ - dynamic-sim
 ---
 
 

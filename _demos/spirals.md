@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Spirals"
-date: 20230813
-last_updated: 20230813
+date: 2023-08-13
+lastUpdated: 2023-08-13
 techs:
   - dynamic-sim
 ---

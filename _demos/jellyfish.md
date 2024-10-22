@@ -1,10 +1,10 @@
 ---
 layout: demo
 title: "Jellyfish"
-date: 20231119
-last_updated: 20231119
+date: 2023-11-19
+lastUpdated: 2023-11-19
 techs:
-  - tailored-sim
+  - dynamic-sim
 ---
 
 

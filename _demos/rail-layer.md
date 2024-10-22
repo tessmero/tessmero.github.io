@@ -1,10 +1,12 @@
 ---
 layout: demo
 title: "Rail Layer"
-date: 20241020
-last_updated: 20241020
+date: 2024-10-20
+lastUpdated: 2024-10-20
 techs: 
   - idle-engine
+sound: true
+music: false
 ---
 
   

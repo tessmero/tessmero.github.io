@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Planet"
-date: 20230723
-last_updated: 20230723
+date: 2023-07-23
+lastUpdated: 2023-07-23
 techs:
  - procedural-motion
 ---

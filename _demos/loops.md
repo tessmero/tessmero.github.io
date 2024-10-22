@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Loops"
-date: 20240115
-last_updated: 20240115
+date: 2024-01-15
+lastUpdated: 2024-01-15
 techs:
  - html5-composite
 ---

@@ -1,12 +1,16 @@
 ---
 layout: demo
 title: "Space Quest"
-date: 20240907
-last_updated: 20241008
+date: 2024-09-07
+lastUpdated: 2024-10-08
 techs:
   - idle-engine
   - infinite-canvas
   - procedural-world
+changelog:
+  - 2024-10-08 fix memory leak where perlin generator saved all outputs
+sound: true
+music: true
 ---
 
 

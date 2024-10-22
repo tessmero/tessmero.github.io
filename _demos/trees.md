@@ -1,8 +1,8 @@
 ---
 layout: demo
 title: "Trees"
-date: 20230716
-last_updated: 20230716
+date: 2023-07-16
+lastUpdated: 2023-07-16
 techs:
   - html5-composite
 ---

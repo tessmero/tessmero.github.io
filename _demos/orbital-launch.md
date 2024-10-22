@@ -1,11 +1,13 @@
 ---
 layout: demo
 title: "Orbital Launch"
-date: 20241006
-last_updated: 20241006
+date: 2024-10-06
+lastUpdated: 2024-10-06
 techs: 
   - idle-engine
   - procedural-motion
+sound: true
+music: true
 ---
 
 <canvas id="gameCanvas">

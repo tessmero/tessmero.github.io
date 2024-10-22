@@ -1,8 +1,10 @@
 ---
 layout: demo
 title: "Wheely"
-date: 20240929
-last_updated: 20240929
+date: 2024-09-29
+lastUpdated: 2024-09-29
+sound: true
+music: true
 techs:
   - idle-engine
   - dynamic-sim
