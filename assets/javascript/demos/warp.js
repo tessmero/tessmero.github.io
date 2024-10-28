@@ -213,7 +213,8 @@ function getNextWarp(){
 // graphics context
 var canvas;
 var ctx;
-var graphics_scale = 2;
+var textDrawn = false;
+const graphics_scale = 2;
 
 // mouse
 var canvasMouseX = 0 //pixels
@@ -252,33 +253,36 @@ var anim_speed = .0005
 function avg(p0,p1,r){
     return [p0[0]*(1.0-r)+p1[0]*r,p0[1]*(1.0-r)+p1[1]*r]
 }
-    
-// Render graphics
-function draw(fps, t) {
-   
-   var n_particles = Math.floor(canvas.width*canvas.height*particles_per_screen_pixel)
-   
-    ctx.fillStyle = 'black'
-    ctx.fillRect( 0, 0, canvas.width, canvas.height )
 
-    ctx.fillStyle = 'white'
-    resetRand()
-    for( var i = 0 ; i < n_particles ; i++ ){
-        var a = anim_angle + rand() * Math.PI*2
-        var r = rand() + .5
-        var x = pan_pos[0] + rand() * canvas.width + r*Math.cos(a * Math.floor(rand()*10))
-        var y = pan_pos[1] + rand() * canvas.height //+ r*Math.sin(a)
-        var txy0 = warp.warpPoint(x,y)
-        if( next_warp ){
-            var txy1 = next_warp.warpPoint(x,y)
-            var txy = avg(txy0,txy1,warp_transition_r)
-        } else {
-            var txy = txy0
-        }
-        ctx.fillRect( txy[0]-particle_radius, txy[1]-particle_radius, 2*particle_radius, 2*particle_radius )
+// Render particles with WebGL
+function draw(fps) {
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const positions = [];
+    resetRand();
+    for (let i = 0; i < particleCount; i++) {
+        const a = anim_angle + rand() * Math.PI * 2;
+        const r = rand() + 0.5;
+        const x = pan_pos[0] + rand() * gl.canvas.width + r * Math.cos(a * Math.floor(rand() * 10));
+        const y = pan_pos[1] + rand() * gl.canvas.height;
+        const txy0 = warp.warpPoint(x, y);
+        const txy = next_warp ? avg(txy0, next_warp.warpPoint(x, y), warp_transition_r) : txy0;
+
+        positions.push(txy[0] / graphics_scale, txy[1] / graphics_scale);
     }
 
-    // draw logo
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    gl.drawArrays(gl.POINTS, 0, particleCount);    
+    
+
+    if( !textDrawn ){
+      textDrawn = true
+      console.log('drawing text')
+
+    // draw logo on front canvas
     ctx.font = "italic 20px Blippo, fantasy";
     ctx.fontWeight = "35px";
     ctx.textAlign = "center";
@@ -298,32 +302,7 @@ function draw(fps, t) {
     ctx.fillStyle = "black";
     ctx.fillText("tessmero", x, y+oy-dy);
     ctx.fillText(". github . io", x, y+oy+dy);
-    
-
-    // Draw FPS on the screen
-    //ctx.font = "25px Arial";
-    //ctx.textAlign = "left";
-    //ctx.fillStyle = "white";
-    //var x = 10
-    //var y = 100
-    //ctx.fillText("FPS: " + fps, x, y);
-    
-    // draw mouse location
-    //if( mouse_forget_countdown > 0 ){
-    //    ctx.fillStyle = "red"
-    //    ctx.beginPath()
-    //    ctx.arc( canvasMouseX, canvasMouseY, 10, 0, Math.PI*2 )
-    //    ctx.fill()
-    //}
-    
-    //y += 30
-    //ctx.fillText(`camera: ${cameraX.toFixed(2)}, ${cameraY.toFixed(2)}, ${zoomLevel.toFixed(2)}`, x, y);
-    //y += 30
-    //ctx.fillText(gameState, x, y);
-    //y += 30 
-    //ctx.fillText(`canvas pos: ${canvasMouseX}, ${canvasMouseY}`, x, y);
-    //y += 30
-    //ctx.fillText(`virtual pos: ${virtualMouseX}, ${virtualMouseY}`, x, y);
+    }
 }
 
 function updateMousePos(event){
@@ -338,21 +317,99 @@ function updateMousePos(event){
     
 }
 
+let gl, program;
+let particleCount;
+let positionBuffer;
+let displayWidth, displayHeight;
 
-
-// Initialize the game
+// Initialize the screensaver
 function init() {
-    canvas = document.getElementById("gameCanvas");
-    canvas.addEventListener("mousemove", updateMousePos);
-    canvas.addEventListener("click", updateMousePos);
-    ctx = canvas.getContext("2d");
+    const canvas = document.getElementById("particleCanvas");
+    // canvas.addEventListener("mousemove", updateMousePos);
+    // canvas.addEventListener("click", updateMousePos);
+
+    frontCanvas = document.getElementById("textCanvas");
+    frontCanvas.addEventListener("mousemove", updateMousePos);
+    frontCanvas.addEventListener("click", updateMousePos);
+    ctx = frontCanvas.getContext("2d");
+
+    // Initialize WebGL
+    gl = canvas.getContext("webgl");
+    if (!gl) {
+        console.error("WebGL not supported.");
+        return;
+    }
+
+    // Initialize WebGL program
+    initWebGLProgram();
     requestAnimationFrame(gameLoop);
 }
 
+// Initialize WebGL program and shaders
+function initWebGLProgram() {
+    const vertexShaderSource = `
+        attribute vec2 a_position;
+        uniform vec2 u_resolution;
+        void main() {
+            vec2 position = (a_position / u_resolution) * 2.0 - 1.0;
+            gl_PointSize = 2.0;
+            gl_Position = vec4(position * vec2(1, -1), 0, 1);
+        }
+    `;
+    const fragmentShaderSource = `
+        precision mediump float;
+        void main() {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    `;
+    const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+    program = createProgram(vertexShader, fragmentShader);
+
+    gl.useProgram(program);
+
+    // Set up position buffer for particles
+    positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // Initialize display dimensions
+    displayWidth = gl.canvas.clientWidth;
+    displayHeight = gl.canvas.clientHeight;
+}
+
+// Create shader
+function createShader(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
+    return shader;
+}
+
+// Create program
+function createProgram(vertexShader, fragmentShader) {
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(program));
+        gl.deleteProgram(program);
+        return null;
+    }
+    return program;
+}
+
 // Main game loop
-let secondsPassed;
 let oldTimeStamp;
-let fps;
 
 function gameLoop(timeStamp) {
     
@@ -367,10 +424,44 @@ function gameLoop(timeStamp) {
 
     msPassed = Math.min(msPassed,200)
 
+    fitToContainer()
     update(msPassed);
     draw(fps);
 
     requestAnimationFrame(gameLoop);
+}
+
+let lastCanvasOffsetWidth = -1;
+let lastCanvasOffsetHeight = -1;
+
+function fitToContainer() {
+  canvas = gl.canvas;
+
+  let ow = canvas.offsetWidth;
+  let oh = canvas.offsetHeight;
+
+  if ( (ow !== lastCanvasOffsetWidth) || (oh !== lastCanvasOffsetHeight)) {
+      console.log('size changed')
+
+        canvas.width = canvas.offsetWidth / graphics_scale;
+        canvas.height = canvas.offsetHeight / graphics_scale;
+        frontCanvas.width = canvas.offsetWidth / graphics_scale;
+        frontCanvas.height = canvas.offsetHeight / graphics_scale;
+
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+        gl.uniform2f(resolutionUniformLocation, 
+          gl.canvas.width / graphics_scale, gl.canvas.height / graphics_scale);
+
+        // Recalculate particle count based on new canvas size
+        particleCount = Math.floor(gl.canvas.width * gl.canvas.height * particles_per_screen_pixel);
+
+
+        lastCanvasOffsetWidth = ow
+        lastCanvasOffsetHeight = oh
+        textDrawn = false
+    }
 }
 
 
@@ -379,20 +470,7 @@ init();
 
 
 
-function fitToContainer(){
-  canvas.style.width='100%';
-  canvas.style.height='100%';
-  
-  if( canvas.offsetHeight > canvas.offsetWidth ){
-      canvas.style.height=`${canvas.offsetWidth}px`;
-  } 
-  
-  canvas.width  = canvas.offsetWidth/graphics_scale;
-  canvas.height = canvas.offsetHeight/graphics_scale;
-}
-
 function update(dt) {
-    fitToContainer()
     
     // transition between warp functions
     warp_transition_r = Math.min( warp_transition_r+warp_transition_dr, 1.0 )

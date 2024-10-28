@@ -21,7 +21,18 @@
 
 
 <div id="info-footer" style="display: flex; justify-content: space-between;">
-    <span>{{ page.title }}</span>
+    <span style="text-align: left; width: 10px; overflow:visible; white-space: nowrap;">
+      {{ page.title }}
+      
+    {% if page.changelog %}
+    <ul style="font-size:10px">
+      {% for change in page.changelog %}
+      <li>{{ change }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+</span>
   <span>
 
 
@@ -32,7 +43,7 @@
         <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.title }}
     </a>
     {% endfor %}
-
+    
 </span>
 
   <span>
