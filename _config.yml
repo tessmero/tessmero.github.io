@@ -21,12 +21,10 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
-  - "_demos/rail-layer.md"
+  - "_demos/boating-school.md"
   - "_demos/collide-o-scope.md"
   - "_demos/orbital-launch.md"
-  - "_demos/wheely.md"
   - "_demos/grove-tender.md"
-  - "_demos/fight-cub.md"
          
   
 
