@@ -216,6 +216,8 @@ var ctx;
 var textDrawn = false;
 const graphics_scale = 2;
 
+var positions = null; // float array
+
 // mouse
 var canvasMouseX = 0 //pixels
 var canvasMouseY = 0 //pixels
@@ -259,7 +261,6 @@ function draw(fps) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    const positions = [];
     resetRand();
     for (let i = 0; i < particleCount; i++) {
         const a = anim_angle + rand() * Math.PI * 2;
@@ -269,11 +270,12 @@ function draw(fps) {
         const txy0 = warp.warpPoint(x, y);
         const txy = next_warp ? avg(txy0, next_warp.warpPoint(x, y), warp_transition_r) : txy0;
 
-        positions.push(txy[0] / graphics_scale, txy[1] / graphics_scale);
+        positions[2*i] = txy[0] / graphics_scale
+        positions[2*i+1] = txy[1] / graphics_scale;
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
     gl.drawArrays(gl.POINTS, 0, particleCount);    
     
@@ -461,6 +463,7 @@ function fitToContainer() {
         lastCanvasOffsetWidth = ow
         lastCanvasOffsetHeight = oh
         textDrawn = false
+        positions = new Float32Array(2*particleCount)
     }
 }
 
