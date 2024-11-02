@@ -21,10 +21,10 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
+  - "_demos/itsu-doku.md"
   - "_demos/boating-school.md"
   - "_demos/collide-o-scope.md"
   - "_demos/orbital-launch.md"
-  - "_demos/warp.md"
          
   
 

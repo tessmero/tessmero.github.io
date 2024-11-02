@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2024-11-02 Add itsu-doku demo
   - 2024-10-27 Add boating-school demo
   - 2024-10-21 Add changelog and update more... page
   - 2024-10-20 Add rail-layer demo
