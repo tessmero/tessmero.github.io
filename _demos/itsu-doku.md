@@ -3,6 +3,7 @@ layout: demo
 title: "Itsu Doku"
 date: 2024-11-02
 lastUpdated: 2024-11-02
+lastUpdatedSubversion: "a"
 techs:
   - idle-engine
   - procedural-motion
