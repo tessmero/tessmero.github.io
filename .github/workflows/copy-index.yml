@@ -19,8 +19,8 @@ jobs:
         
       - name: Copy Existing Page to Index.html
         run: |
-          sudo cp _site/itsudoku.html _site/index.html
-          echo "Copied itsudoku.html to index.html"
+          sudo cp _site/avalanche.html _site/index.html
+          echo "Copied avalanche.html to index.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
