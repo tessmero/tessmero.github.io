@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2024-11-17 Add rocket-car demo
   - 2024-11-10 Add avalanche demo
   - 2024-11-02 Add itsudoku demo
   - 2024-10-27 Add boating-school demo
