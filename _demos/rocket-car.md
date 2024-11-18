@@ -6,6 +6,7 @@ lastUpdated: 2024-11-17
 techs:
   - idle-engine
   - procedural-world
+  - dynamic-sim
 ---
 
 
