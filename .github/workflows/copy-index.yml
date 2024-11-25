@@ -19,8 +19,8 @@ jobs:
         
       - name: Copy Existing Page to Index.html
         run: |
-          sudo cp _site/rocket-car.html _site/index.html
-          echo "Copied rocket-car.html to index.html"
+          sudo cp _site/cube-dance.html _site/index.html
+          echo "Copied cube-dance.html to index.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

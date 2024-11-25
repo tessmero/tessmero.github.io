@@ -21,10 +21,10 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
-  - "_demos/rocket-car.md"
+  - "_demos/cube-dance.md"
   - "_demos/avalanche.md"
-  - "_demos/collide-o-scope.md"
   - "_demos/orbital-launch.md"
+  - "_demos/grove-tender.md"
          
   
 
