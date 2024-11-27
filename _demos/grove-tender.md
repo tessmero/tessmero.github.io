@@ -6,8 +6,6 @@ lastUpdated: 2024-10-04
 changelog:
   2024-10-04 fix crash on (prog, select cmd 5, reset, prog)
 techs:
-  - idle-engine
-  - procedural-motion
 sound: true
 music: true
 ---

@@ -5,10 +5,7 @@ title: "Rain Catcher"
 date: 2024-01-28
 lastUpdated: 2024-08-31
 techs:
-  - idle-engine
-  - procedural-motion
-  - dynamic-sim
-  - html5-composite
+  - physics
 ---
 
 

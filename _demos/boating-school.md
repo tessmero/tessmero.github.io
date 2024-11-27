@@ -4,8 +4,8 @@ title: "Boating School"
 date: 2024-10-27
 lastUpdated: 2024-10-27
 techs:
-  - idle-engine
-  - infinite-canvas
+  - multitouch
+  - physics
 sound: true
 music: true
 ---

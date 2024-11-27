@@ -4,10 +4,7 @@ title: "Fight Cub"
 date: 2024-09-14
 lastUpdated: 2024-09-14
 techs:
-  - idle-engine
-  - dynamic-sim
-  - character-rig
-  - procedural-motion
+  - physics
 sound: true
 music: true
 ---

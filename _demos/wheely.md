@@ -6,10 +6,7 @@ lastUpdated: 2024-09-29
 sound: true
 music: true
 techs:
-  - idle-engine
-  - dynamic-sim
-  - infinite-canvas
-  - procedural-world
+  - physics
 ---
 
 

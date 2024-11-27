@@ -17,40 +17,8 @@
 
 
 
-<a id="source-link" style="cursor:pointer">about | © 2023 - 2024 Oliver Tessmer</a>
+<a id="source-link">Copyright © 2023 - 2024 Oliver Tessmer</a>
 
-
-<div id="info-footer" style="display: flex; justify-content: space-between;">
-    <span style="text-align: left; width: 10px; overflow:visible; white-space: nowrap;">
-      {{ page.title }}
-      
-    {% if page.changelog %}
-    <ul style="font-size:10px">
-      {% for change in page.changelog %}
-      <li>{{ change }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-
-</span>
-  <span>
-
-
-    {% for techname in page.techs %}
-      {% assign tech = site.techs | where: "slug", techname | first %}
-
-    <a href="{{ tech.url }}" class="btn btn-outline-dark tag-btn">
-        <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.title }}
-    </a>
-    {% endfor %}
-    
-</span>
-
-  <span>
-    <a href="mailto:oliver.tessmer@gmail.com" style="color:white">contact</a>
-  </span>
-
-</div>
 
 <style>
     

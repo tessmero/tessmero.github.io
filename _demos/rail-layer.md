@@ -4,7 +4,6 @@ title: "Rail Layer"
 date: 2024-10-20
 lastUpdated: 2024-10-20
 techs: 
-  - idle-engine
 sound: true
 music: false
 ---

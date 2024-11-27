@@ -7,7 +7,6 @@ lastUpdatedSubversion: "a"
 changelog:
   2024-10-28 switch to WebGL
 techs:
-  - procedural-motion
 ---
 
 

@@ -15,9 +15,9 @@ collections:
     output: true
     permalink: /:name
   changelogs:
-    output: true
+    output: false
   techs:
-    output: true
+    output: false
 
 # navigation bar with dropdowns
 header_pages:

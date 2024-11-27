@@ -4,9 +4,9 @@ title: "Rocket Car"
 date: 2024-11-17
 lastUpdated: 2024-11-17
 techs:
-  - idle-engine
-  - procedural-world
-  - dynamic-sim
+  - physics
+  - three-js
+  - multitouch
 ---
 
 

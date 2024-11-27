@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2024-11-26 Removed "technique" pages, switch to simple tag filters on more... page
   - 2024-11-25 Add cube-dance demo
   - 2024-11-17 Add rocket-car demo
   - 2024-11-10 Add avalanche demo

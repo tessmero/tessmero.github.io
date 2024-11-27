@@ -3,7 +3,14 @@ layout: demo_list
 permalink: /demo_list
 ---
 
+
 <div class="container col-lg-8 col-md-12">
+<div markdown="1">
+- I use my framework, the "idle game engine" [More](/techniques)
+- For fast 3D graphics I use [Three.js](https://threejs.org/).
+- For fast 2D graphics I follow [this method](https://stackoverflow.com/a/6003174/1617811). 
+
+</div>
   <!-- Sort Buttons with Icons -->
   <div class="mb-3">
     <button class="btn btn-primary" onclick="sortDemos('title', this)">
@@ -28,12 +35,30 @@ permalink: /demo_list
       <input type="checkbox" id="filter-sound" onclick="filterDemos()" /> 
       Sound
     </label>
-  </div>
+    {% for tech in site.techs %}
+    <label class="ml-2">
+      <input type="checkbox" 
+             class="filter-tech-checkbox"
+             id="filter-tech-{{ tech.slug }}" 
+             value="{{ tech.slug }}" 
+             onclick="filterDemos()" /> 
+      {{ tech.shortTitle }}
+    </label>
+  {% endfor %}
+</div>
+
 
   <div id="demo_list" class="row">
     {% assign ordered_demos = site.demos | sort:"date" %}
     {% for demo in ordered_demos reversed %}
-    <div class="demo-item col-lg-6 col-md-6 col-sm-12 mb-4" data-title="{{ demo.title }}" data-date="{{ demo.date }}" data-last_updated="{{ demo.lastUpdated }}" data-music="{{ demo.music }}" data-sound="{{ demo.sound }}">
+    <div class="demo-item col-lg-6 col-md-6 col-sm-12 mb-4" 
+     data-title="{{ demo.title }}" 
+     data-date="{{ demo.date }}" 
+     data-last_updated="{{ demo.lastUpdated }}" 
+     data-music="{{ demo.music }}" 
+     data-sound="{{ demo.sound }}"
+     data-techs="{{ demo.techs | join: ',' }}"
+     >
       <div class="row align-items-center demo-row" onclick="toggleDetails(this)">
         <!-- Thumbnail Image -->
         <div class="col-6 thumbnail-container">
@@ -64,18 +89,20 @@ permalink: /demo_list
           {% if demo.sound %}
             <span class="fa fa-volume-up" aria-hidden="true" title="Has sound"></span>
           {% endif %}
+          {% for techname in demo.techs %}
+            {% assign tech = site.techs | where: "slug", techname | first %}
+  {% if tech %}
+    <button style="font-size: 0.8em;" class="py-0 btn btn-sm btn-outline-dark tag-btn tech-filter-btn" data-tech="{{ tech.slug }}">
+              <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.shortTitle }}
+            </button>
+            {% endif %}
+          {% endfor %}
         </div>
       </div>
 
       <!-- Combined Techs and Changelog Section -->
       <div class="row demo-details" style="display:none; position: absolute; width: 100%;">
         <div class="col-12">
-          {% for techname in demo.techs %}
-            {% assign tech = site.techs | where: "slug", techname | first %}
-            <a href="{{ tech.url }}" class="btn btn-sm btn-outline-dark tag-btn">
-              <span class="fa fa-tag" aria-hidden="true"></span> {{ tech.shortTitle }}
-            </a>
-          {% endfor %}
 
           {% if demo.changelog %}
           <h5>Changelog</h5>
@@ -176,27 +203,58 @@ permalink: /demo_list
   }
 
   // Function to filter demos based on Music and Sound checkboxes
-  function filterDemos() {
-    const filterMusic = document.getElementById('filter-music').checked;
-    const filterSound = document.getElementById('filter-sound').checked;
-    const demoItems = document.getElementsByClassName('demo-item');
+function filterDemos() {
+  const filterMusic = document.getElementById('filter-music').checked;
+  const filterSound = document.getElementById('filter-sound').checked;
+  const demoItems = document.getElementsByClassName('demo-item');
 
-    for (let i = 0; i < demoItems.length; i++) {
-      const demoItem = demoItems[i];
-      const hasMusic = demoItem.getAttribute('data-music') === 'true';
-      const hasSound = demoItem.getAttribute('data-sound') === 'true';
+  // Get all selected tech filters
+  const selectedTechs = Array.from(document.querySelectorAll('input[id^="filter-tech-"]:checked'))
+    .map(checkbox => checkbox.value);
 
-      // Show the demo if it matches the filter criteria
-      if (
-        (!filterMusic || hasMusic) && 
-        (!filterSound || hasSound)
-      ) {
-        demoItem.style.display = 'block'; // Show the demo
-      } else {
-        demoItem.style.display = 'none'; // Hide the demo
-      }
+  for (let i = 0; i < demoItems.length; i++) {
+    const demoItem = demoItems[i];
+    const hasMusic = demoItem.getAttribute('data-music') === 'true';
+    const hasSound = demoItem.getAttribute('data-sound') === 'true';
+    const demoTechs = demoItem.getAttribute('data-techs').split(',');
+
+    // Check if demo passes all filters
+    const techMatch = selectedTechs.length === 0 || 
+      selectedTechs.every(tech => demoTechs.includes(tech));
+
+    if (
+      (!filterMusic || hasMusic) &&
+      (!filterSound || hasSound) &&
+      techMatch
+    ) {
+      demoItem.style.display = 'block';
+    } else {
+      demoItem.style.display = 'none';
     }
   }
+  // Scroll to the top of the page
+  window.scrollTo(0, 0);
+}
+
+function filterByTech(techSlug) {
+   const checkboxes = document.querySelectorAll(`input[type="checkbox"].filter-tech-checkbox`);
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = false;
+  });
+  const checkbox = document.getElementById(`filter-tech-${techSlug}`);
+  if (checkbox) {
+    checkbox.checked = true;
+    filterDemos();
+  }
+}
+
+// Add event listeners to tech filter buttons
+document.querySelectorAll('.tech-filter-btn').forEach(button => {
+  button.addEventListener('click', function(event) {
+    event.stopPropagation();
+    filterByTech(this.getAttribute('data-tech'));
+  });
+});
 
   // Deselect the currently selected item when clicking outside
   document.addEventListener('click', () => {

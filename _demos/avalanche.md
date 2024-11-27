@@ -5,8 +5,8 @@ date: 2024-11-10
 lastUpdated: 2024-11-10
 lastUpdatedSubversion: "a"
 techs:
-  - idle-engine
-  - procedural-motion
+  - three-js
+  - multitouch
 sound: true
 music: true
 ---

@@ -4,7 +4,7 @@ title: "Spirals"
 date: 2023-08-13
 lastUpdated: 2023-08-13
 techs:
-  - dynamic-sim
+  - physics
 ---
 
 
