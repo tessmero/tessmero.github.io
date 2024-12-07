@@ -3,7 +3,7 @@ layout: demo
 title: "Sketch Ball"
 date: 2024-12-07
 lastUpdated: 2024-12-07
-lastUpdatedSubversion: "a"
+lastUpdatedSubversion: "b"
 techs:
   - three-js
   - physics
