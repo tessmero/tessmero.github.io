@@ -21,7 +21,7 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
-  - "_demos/cube-dance.md"
+  - "_demos/puppy-puddle.md"
   - "_demos/avalanche.md"
   - "_demos/orbital-launch.md"
   - "_demos/grove-tender.md"

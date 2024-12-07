@@ -1,42 +1,44 @@
 ---
 layout: demo
-title: "Fight Cub"
-date: 2024-09-14
+title: "Sketch Ball"
+date: 2024-12-07
 lastUpdated: 2024-12-07
-changelog:
-  2024-12-07 Fix loud bass sound effects
 techs:
+  - three-js
   - physics
-sound: true
-music: true
 ---
 
 
-<canvas id="gameCanvas">
-</canvas>
+<canvas id="backCanvas" style="z-index:1;"></canvas>
+
+<canvas id="threeCanvas" style="z-index:2;"></canvas>
+
+<canvas id="blocker" style="z-index:3; background-color:rgb(200,200,200); display:none"></canvas>
+
+<canvas id="sketchGuideCanvas" style="z-index:4; display:none"></canvas>
+
+<canvas id="sketchCanvas" style="z-index:5;"></canvas>
+
+<canvas id="guiCanvas" style="z-index:6;"></canvas>
+
 
 
 <style>
-    
     * { margin: 0; padding: 0;}
 
     body, html { 
       height:100%; 
       overflow:hidden; 
-      background-color:#AAA;
+      background-color:rgb(200,200,200);
     }
 
     canvas {
       border: none;
-    }
-
-    #gameCanvas {
         position:absolute;
         left: 0px;
 top: 0px;
         width:100%;
         height:100%;
-        z-index: 3;
           background:transparent; 
     }
 
@@ -47,4 +49,3 @@ top: 0px;
      min-height: -webkit-fill-available; 
     }
 </style>
-

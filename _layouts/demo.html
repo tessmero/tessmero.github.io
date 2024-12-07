@@ -67,25 +67,7 @@
       event.preventDefault();
     })
 
-    const infoBtn = document.getElementById('source-link');
-    const infoFooter = document.getElementById('info-footer');
 
-    infoBtn.addEventListener('click', () => {
-        infoFooter.classList.toggle('show');
-    });
-
-
-    
-// Hide the footer when clicking outside of it
-document.addEventListener('click', function(event) {
-  const infoFooter = document.getElementById('info-footer');
-  const infoButton = document.getElementById('source-link');
-
-  // Check if the click is outside the info-footer and info-btn
-  if (!infoFooter.contains(event.target) && !infoButton.contains(event.target)) {
-        infoFooter.classList.remove('show')
-  }
-});
 </script>
   </body>
 
