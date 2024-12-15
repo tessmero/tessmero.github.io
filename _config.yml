@@ -21,10 +21,10 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
-  - "_demos/puppy-puddle.md"
-  - "_demos/avalanche.md"
-  - "_demos/orbital-launch.md"
-  - "_demos/grove-tender.md"
+  - "_demos/trees.md"
+  - "_demos/collide-o-scope.md"
+  - "_demos/sand.md"
+  - "_demos/wheely.md"
          
   
 

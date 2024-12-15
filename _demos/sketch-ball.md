@@ -2,8 +2,9 @@
 layout: demo
 title: "Sketch Ball"
 date: 2024-12-07
-lastUpdated: 2024-12-07
-lastUpdatedSubversion: "b"
+lastUpdated: 2024-12-14
+changelog:
+  2024-12-14 Add title screen and moving obstacles
 techs:
   - three-js
   - physics
