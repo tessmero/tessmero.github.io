@@ -289,16 +289,22 @@ document.querySelectorAll('.tech-filter-btn').forEach(button => {
 
 
 <div id="music-player" style="display: none;">
-  <span id="song-player-label">Song Player</span>
+  <span id="song-player-label" class="hidden-on-small-screen">Song Player</span>
   <select name="select-song" id="select-song" onchange="playClicked()">
   </select>
   <button id="play">Play</button>
   <button id="stop">Stop</button>
   <input type="range" min="0" max="1" step="0.1" value=".5" class="slider" id="musicVolumeSlider">
-  <button id="close">Close</button>
+  <button id="close" class="hidden-on-small-screen">Close</button>
 </div>
 
-<style>
+<style> 
+
+  @media (max-width: 768px) {
+       .hidden-on-small-screen {
+           display: none;
+       }
+   }
   #music-player {
     position: fixed;
     bottom: 0;
