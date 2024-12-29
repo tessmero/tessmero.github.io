@@ -21,9 +21,9 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
-  - "_demos/trees.md"
+  - "_demos/raincatcher.md"
   - "_demos/collide-o-scope.md"
-  - "_demos/avalanche.md"
+  - "_demos/grove-tender.md"
   - "_demos/orbital-launch.md"
          
   
