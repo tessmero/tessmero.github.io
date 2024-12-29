@@ -294,7 +294,7 @@ document.querySelectorAll('.tech-filter-btn').forEach(button => {
   </select>
   <button id="play">Play</button>
   <button id="stop">Stop</button>
-  <input type="range" min="0" max="1" step="0.1" value=".5" class="slider" id="musicVolumeSlider">
+  <input type="range" min="0" max="1" step="0.01" value=".5" class="slider" id="musicVolumeSlider">
   <button id="close" class="hidden-on-small-screen">Close</button>
 </div>
 
@@ -343,8 +343,10 @@ document.querySelectorAll('.tech-filter-btn').forEach(button => {
   const output = document.getElementById("volumeValue");
   const musicPlayer = document.getElementById("music-player");
 
-  slider.oninput = function() {
-    MusicManager().outNode.gain.value = parseFloat(this.value);
+  slider.oninput = updateVolume
+
+  function updateVolume(){
+    MusicManager().outNode.gain.value = parseFloat(slider.value);
   }
 
   function playClicked(){
@@ -354,6 +356,8 @@ document.querySelectorAll('.tech-filter-btn').forEach(button => {
 
     MusicManager().stopMusic();
     MusicManager().startMusicLoop(songData);
+
+    updateVolume() 
   }
 
   function showMusicPlayer() {
