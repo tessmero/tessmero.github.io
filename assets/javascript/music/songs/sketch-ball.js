@@ -15,7 +15,7 @@ SONGS['sketch-ball'] = {
     {
       // melody
       wave: 'sine',
-      volume: 0.05,
+      volume: 0.15,
       duration: _DUR, // sixteenth notes
       freq: 'A2', // 0 note
       // env: 'bachBass',
@@ -23,7 +23,7 @@ SONGS['sketch-ball'] = {
     {
       // melody
       wave: 'sine',
-      volume: 0.07,
+      volume: 0.2,
       duration: _DUR, // sixteenth notes
       freq: 'A2', // 0 note
       // env: 'bachBass',
@@ -31,7 +31,7 @@ SONGS['sketch-ball'] = {
     {
       // melody
       wave: 'sine',
-      volume: 0.1,
+      volume: 0.3,
       duration: _DUR, // sixteenth notes
       freq: 'A2', // 0 note
       env: 'bachBass',
@@ -40,7 +40,7 @@ SONGS['sketch-ball'] = {
       // kick drum
       duration: _DUR, // sixteenth notes
       wave: 'sin',
-      volume: 0.3,
+      volume: 1.0,
       env: 'attack',
       startFreq: 150, // 0 note
       endFreq: 10,
