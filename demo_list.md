@@ -300,7 +300,7 @@ document.querySelectorAll('.tech-filter-btn').forEach(button => {
 
 <style> 
 
-  @media (max-width: 768px) {
+  @media (max-width: 600px) {
        .hidden-on-small-screen {
            display: none;
        }
