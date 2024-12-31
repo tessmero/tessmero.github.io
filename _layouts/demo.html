@@ -21,6 +21,14 @@
 
 
 <style>
+    body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.navbar {
+  flex-shrink: 0;
+}
     
     #source-link {
         font-size:10px;
@@ -62,10 +70,12 @@
 </style>
 
 <script>
-    
-    document.querySelector('canvas').addEventListener('contextmenu', (event) => {
-      event.preventDefault();
-    })
+    const canvas = document.querySelector('canvas');
+if (canvas) {
+  canvas.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+  });
+}
 
 
 </script>
