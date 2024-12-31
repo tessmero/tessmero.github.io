@@ -2,13 +2,15 @@
 layout: demo
 title: "Avalanche"
 date: 2024-11-10
-lastUpdated: 2024-11-10
-lastUpdatedSubversion: "a"
+lastUpdated: 2024-12-31
+changelog:
+  2024-12-31 Game starts in full screen mode
 techs:
   - three-js
   - multitouch
 sound: true
 music: true
+
 ---
 
 <iframe id="gameFrame" src="/iframe/avalanche/index.html" allowfullscreen></iframe>
