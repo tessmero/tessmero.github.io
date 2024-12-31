@@ -21,8 +21,8 @@ jobs:
         run: |
           for zipfile in _zips/*.zip; do
             gamename=$(basename "$zipfile" .zip)
-            mkdir -p "_site/iframe/$gamename"
-            unzip "$zipfile" -d "_site/iframe/$gamename"
+            sudo mkdir -p "_site/iframe/$gamename"
+            sudo unzip "$zipfile" -d "_site/iframe/$gamename"
           done
 
       - name: Copy Existing Page to Index.html

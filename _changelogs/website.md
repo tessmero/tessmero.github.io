@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2024-12-31 Support zipped assets and fullscreen iframe like itch.io
   - 2024-12-29 Add music easter egg on more... page
   - 2024-12-07 Add sketch-ball demo
   - 2024-11-26 Removed "technique" pages, switch to simple tag filters on more... page
