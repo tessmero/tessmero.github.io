@@ -4,7 +4,7 @@ title: "Avalanche"
 date: 2024-11-10
 lastUpdated: 2024-12-31
 changelog:
-  2024-12-31 Game starts in full screen mode
+  2024-12-31 Game starts in fullscreen mode
 techs:
   - three-js
   - multitouch
