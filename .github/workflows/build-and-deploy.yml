@@ -15,11 +15,19 @@ jobs:
 
 
       - name: Verify _demos matches _zips
-        run: bash ${GITHUB_WORKSPACE}/verify_md_zip.sh
+        id: verify
+        run: |
+          output=$(bash ${GITHUB_WORKSPACE}/verify_md_zip.sh 2>&1) || echo "::set-output name=error::$output"
       - name: Cancel workflow if files don't correspond
         if: failure()
-        run: |
-            core.setFailed('_demos do not match _zips')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const error = process.env.ERROR_MESSAGE || '_demos do not match _zips';
+            core.setFailed(error);
+        env:
+          ERROR_MESSAGE: ${{ steps.verify.outputs.error }}
+
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
