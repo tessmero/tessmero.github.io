@@ -7,14 +7,3 @@ techs:
 ---
 
 
-<canvas id="gameCanvas" width="800" height="600"></canvas>
-
-      
-      
-
-<style>
-#gameCanvas {
-    width: 100%;
-    max-width: 800px;
-}
-</style>

@@ -12,6 +12,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+
+      - name: Verify _demos matches _zips
+        run: bash ${GITHUB_WORKSPACE}/verify_md_zip.sh
+      - name: Cancel workflow if files don't correspond
+        if: failure()
+        run: |
+            core.setFailed('_demos do not match _zips')
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build

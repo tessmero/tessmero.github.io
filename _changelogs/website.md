@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-01-05 Add fullscreen button, quit buttons exit fullscreen
   - 2024-12-31 Support zipped assets and fullscreen iframe like itch.io
   - 2024-12-29 Add music easter egg on more... page
   - 2024-12-07 Add sketch-ball demo

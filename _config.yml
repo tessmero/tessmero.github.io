@@ -21,7 +21,7 @@ collections:
 
 # navigation bar with dropdowns
 header_pages:
-  - "_demos/gawlf.md"
+  - "_demos/ivy.md"
   - "_demos/collide-o-scope.md"
   - "_demos/grove-tender.md"
   - "_demos/orbital-launch.md"

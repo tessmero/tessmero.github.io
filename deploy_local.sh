@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # local version of github workflow
-# run local jekyll build, then run extra commands 
+# verify, jekyll build, extra commands 
+
+# verify that demo md files match zip files
+if ! bash verify_md_zip.sh; then
+    echo "File correspondence check failed. Terminating workflow."
+    exit 1
+fi
 
 # Start Jekyll server in the background
 bundle exec jekyll serve &
