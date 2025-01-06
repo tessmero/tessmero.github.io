@@ -12,6 +12,26 @@
 
 
   <script>
+
+// pass url params to iframe (used for collide-o-scope)
+window.addEventListener('load', function() {
+  var iframe = document.getElementById('gameFrame');
+  var parentParams = window.location.search;
+  var iframeSrc = iframe.src;
+  
+  if (parentParams) {
+    iframe.src = iframeSrc + (iframeSrc.includes('?') ? '&' : '?') + parentParams.substr(1);
+  }
+});
+
+// allow js inside iframe to update url params (used for collide-o-scope)
+window.addEventListener('message', function(event) {
+  if (event.data.type === 'updateUrlSuffix') {
+      window.history.pushState('test', '', event.data.suffix);
+  }
+});
+
+
     document.querySelectorAll('.nav-item.{{page.slug}}').forEach(function(item) {
     item.classList.add('active');
 });
