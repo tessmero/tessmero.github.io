@@ -15,15 +15,39 @@ title: "Changelog"
   {% endfor %}
 {% endfor %}
 
-{% assign sorted_changes = all_changes | sort %}
+{% assign sorted_changes = all_changes | sort | reverse %}
 
 <ul>
-  {% for change in sorted_changes reversed %}
+  {% assign last_date = "" %}
+  {% assign last_message = "" %}
+  {% assign combined_titles = "" %}
 
+  {% for change in sorted_changes %}
     {% assign parts = change | split: '|' %}
-    <li>
-      {{ parts[0] }} <b>{{parts[1]}}</b> 
-      <br>&nbsp;&nbsp;{{parts[2]}}
-    </li>
+    {% assign current_date = parts[0] %}
+    {% assign current_title = parts[1] %}
+    {% assign current_message = parts[2] %}
+
+    {% if current_date == last_date and current_message == last_message %}
+      {% assign combined_titles = current_title | append: ", " | append: combined_titles %}
+    {% else %}
+      {% if last_date != "" %}
+        <li>
+          {{ last_date }} <b>{{ combined_titles }}</b> 
+          <br>&nbsp;&nbsp;{{ last_message }}
+        </li>
+      {% endif %}
+
+      {% assign last_date = current_date %}
+      {% assign last_message = current_message %}
+      {% assign combined_titles = current_title %}
+    {% endif %}
   {% endfor %}
+
+  {% if last_date != "" %}
+    <li>
+      {{ last_date }} <b>{{ combined_titles }}</b> 
+      <br>&nbsp;&nbsp;{{ last_message }}
+    </li>
+  {% endif %}
 </ul>
