@@ -25,7 +25,7 @@ done
 
 # - name: Copy Existing Page to Index.html
 #   run: |
-homepage="sketch-ball.html"
+homepage=$(grep "^homepage:" _config.yml | awk '{print $2}')
 sudo cp "_site/$homepage" _site/index.html
 echo "Copied $homepage to index.html"
 

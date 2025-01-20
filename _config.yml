@@ -19,12 +19,16 @@ collections:
   techs:
     output: false
 
-# navigation bar with dropdowns
+# checked by bash scripts after jekyll build
+# replace index.html with existing page
+homepage: ski-stunt.html
+
+# demos to include in navigation bar
 header_pages:
-  - "_demos/fight-cub.md"
-  - "_demos/collide-o-scope.md"
-  - "_demos/grove-tender.md"
-  - "_demos/orbital-launch.md"
+  - "_demos/itsudoku.md"
+  - "_demos/donut.md"
+  - "_demos/trees.md"
+  - "_demos/avalanche.md"
          
   
 

@@ -32,8 +32,9 @@ jobs:
 
       - name: Copy Existing Page to Index.html
         run: |
-          sudo cp _site/sketch-ball.html _site/index.html
-          echo "Copied sketch-ball.html to index.html"
+          homepage=$(grep "^homepage:" _config.yml | awk '{print $2}')
+          sudo cp "_site/$homepage" _site/index.html
+          echo "Copied $homepage to index.html"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
