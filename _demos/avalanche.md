@@ -2,8 +2,9 @@
 layout: demo
 title: "Avalanche"
 date: 2024-11-10
-lastUpdated: 2025-01-12
+lastUpdated: 2025-01-26
 changelog:
+  - 2025-01-26 Fix audio bugs
   - 2025-01-12 Fix blurry graphics
 techs:
   - three-js

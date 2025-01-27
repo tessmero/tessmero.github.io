@@ -25,9 +25,9 @@ homepage: ski-stunt.html
 
 # demos to include in navigation bar
 header_pages:
-  - "_demos/itsudoku.md"
-  - "_demos/donut.md"
-  - "_demos/trees.md"
+  - "_demos/fight-cub.md"
+  - "_demos/orbital-launch.md"
+  - "_demos/sketch-ball.md"
   - "_demos/avalanche.md"
          
   
