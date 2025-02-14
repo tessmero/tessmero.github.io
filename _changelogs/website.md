@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-02-13 Add pixel-art-workflow demo
   - 2025-01-19 Add ski-stunt demo
   - 2025-01-06 Share url params with iframe (used for collide-o-scope)
   - 2025-01-05 Add fullscreen button and make quit buttons exit fullscreen

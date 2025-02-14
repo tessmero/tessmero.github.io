@@ -5,12 +5,6 @@ permalink: /demo_list
 
 
 <div class="container col-lg-8 col-md-12">
-<div markdown="1">
-- I use my framework, the "idle game engine" [More](/techniques)
-- [Three.js](https://threejs.org/) for fast 3D graphics.
-- [This method](https://stackoverflow.com/a/6003174/1617811) for fast 2D graphics. 
-
-</div>
   <!-- Sort Buttons with Icons -->
   <div class="mb-3">
     <button class="btn btn-primary" onclick="sortDemos('title', this)">
