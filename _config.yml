@@ -21,14 +21,14 @@ collections:
 
 # checked by bash scripts after jekyll build
 # replace index.html with existing page
-homepage: ski-stunt.html
+homepage: warp.html
 
 # demos to include in navigation bar
 header_pages:
-  - "_demos/itsudoku.md"
+  - "_demos/ski-stunt.md"
+  - "_demos/orbital-launch.md"
   - "_demos/collide-o-scope.md"
-  - "_demos/grove-tender.md"
-  - "_demos/clouds.md"
+  - "_demos/sketch-ball.md"
          
   
 
