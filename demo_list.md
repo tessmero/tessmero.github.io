@@ -21,7 +21,11 @@ permalink: /demo_list
   <!-- Checkboxes for Music and Sound Filters -->
   <div class="mb-3">
     <span>Filter:</span>
-    <label>
+    <label class="ml-3">
+      <input type="checkbox" id="filter-hasReports" onclick="filterDemos()" /> 
+      Reports
+    </label>
+    <label class="ml-3">
       <input type="checkbox" id="filter-music" onclick="filterDemos()" /> 
       Music
     </label>
@@ -50,7 +54,8 @@ permalink: /demo_list
      data-date="{{ demo.date }}" 
      data-last_updated="{{ demo.lastUpdated }}" 
      data-music="{{ demo.music }}" 
-     data-sound="{{ demo.sound }}"
+     data-sound="{{ demo.sound }}" 
+     data-hasReports="{{ demo.hasReports }}"
      data-techs="{{ demo.techs | join: ',' }}"
      >
       <div class="row align-items-center demo-row" onclick="toggleDetails(this)">
@@ -61,7 +66,7 @@ permalink: /demo_list
 
         <!-- Demo Title -->
         <div class="col-6">
-          <a href="{{ demo.url }}" class="btn btn-outline-dark tag-btn">
+          <a style="width:100%" href="{{ demo.url }}" class="btn btn-outline-dark tag-btn">
             <span class="fa fa-play" aria-hidden="true"></span> {{ demo.title }}
           </a>
           <br>
@@ -69,10 +74,10 @@ permalink: /demo_list
 {% assign formattedDate = demo.date | date: "%Y-%m-%d" %}
 {% assign formattedLastUpdated = demo.lastUpdated | date: "%Y-%m-%d" %}
 
-<span>Added: {{ formattedDate }}</span>
+<span style="font-size:14px;">Added: {{ formattedDate }}</span>
 {% if demo.lastUpdated %}
   {% if formattedLastUpdated != formattedDate %}
-    <br><span>Updated: {{ formattedLastUpdated }}</span>
+    <br><span style="font-size:14px;">Updated: {{ formattedLastUpdated }}</span>
   {% endif %}
 {% endif %}
 
@@ -83,6 +88,7 @@ permalink: /demo_list
           {% if demo.sound %}
             <span class="fa fa-volume-up" aria-hidden="true" title="Has sound"></span>
           {% endif %}
+
           {% for techname in demo.techs %}
             {% assign tech = site.techs | where: "slug", techname | first %}
   {% if tech %}
@@ -91,16 +97,23 @@ permalink: /demo_list
             </button>
             {% endif %}
           {% endfor %}
+          {% if demo.hasReports %}
+          <button  style="width:100%;height:25px;font-size: 0.9em;" data-src="/iframe/{{ demo.slug }}/reports/index.html" class="py-0 btn btn-sm btn-outline-dark">
+              <span class="fa fa-check" aria-hidden="true"></span> View Reports
+            </button>
+          {% endif %}
         </div>
+
+
+
+      <!-- Changelog Section -->
       </div>
 
-      <!-- Combined Techs and Changelog Section -->
       <div class="row demo-details" style="display:none; position: absolute; width: 100%;">
         <div class="col-12">
-
           {% if demo.changelog %}
-          <h5>Changelog</h5>
-          <ul>
+          <b>Changelog</b>
+          <ul class="changelog">
             {% for change in demo.changelog %}
             <li>{{ change }}</li>
             {% endfor %}
@@ -112,7 +125,85 @@ permalink: /demo_list
     {% endfor %}
   </div>
 </div>
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <iframe id="modalIframe" src="" frameborder="0"></iframe>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modal');
+  const modalIframe = document.getElementById('modalIframe');
+  const closeBtn = document.querySelector('.close');
 
+  // Function to open the modal
+  function openModal(src) {
+    modalIframe.src = src;
+    modal.style.display = 'block';
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    modal.style.display = 'none';
+    modalIframe.src = '';
+  }
+
+  // Event listener for <a> tags with data-src
+  document.querySelectorAll('button[data-src]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal(this.getAttribute('data-src'));
+    });
+  });
+
+  // Close modal when clicking the close button
+  closeBtn.addEventListener('click', closeModal);
+
+  // Close modal when clicking outside the iframe
+  window.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+});
+
+</script>
+<style>
+  .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  position: relative;
+  margin: 10% auto;
+  width: 80%;
+  height: 80%;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  color: #fff;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#modalIframe {
+  width: 100%;
+  height: 100%;
+}
+
+</style>
 
 <script>
   let currentOpen = null; // Track the currently opened row
@@ -142,6 +233,12 @@ permalink: /demo_list
     // expand the clicked row
     details.style.display = 'block';
     currentOpen = details;
+
+    // Find the iframe descendant and set its src to its data-src attribute
+    const iframe = details.querySelector('iframe');
+    if (iframe && iframe.hasAttribute('data-src')) {
+      iframe.src = iframe.getAttribute('data-src');
+    }
   }
 
   let sortOrder = 'asc'; // Track the current sort order globally
@@ -197,10 +294,14 @@ permalink: /demo_list
     }
   }
 
+window.onpageshow = function(event) {
+    filterDemos();
+};
   // Function to filter demos based on Music and Sound checkboxes
 function filterDemos() {
   const filterMusic = document.getElementById('filter-music').checked;
   const filterSound = document.getElementById('filter-sound').checked;
+  const filterHasReports = document.getElementById('filter-hasReports').checked;
   const demoItems = document.getElementsByClassName('demo-item');
 
   // Get all selected tech filters
@@ -211,6 +312,7 @@ function filterDemos() {
     const demoItem = demoItems[i];
     const hasMusic = demoItem.getAttribute('data-music') === 'true';
     const hasSound = demoItem.getAttribute('data-sound') === 'true';
+    const hasReports = demoItem.getAttribute('data-hasReports') === 'true';
     const demoTechs = demoItem.getAttribute('data-techs').split(',');
 
     // Check if demo passes all filters
@@ -220,6 +322,7 @@ function filterDemos() {
     if (
       (!filterMusic || hasMusic) &&
       (!filterSound || hasSound) &&
+      (!filterHasReports || hasReports) &&
       techMatch
     ) {
       demoItem.style.display = 'block';
@@ -443,5 +546,9 @@ document.querySelectorAll('.tech-filter-btn').forEach(button => {
   /* Ensure the techs + changelog section is overlayed */
   .demo-item {
     position: relative;
+  }
+
+  .changelog {
+    font-size: 14px;
   }
 </style>
