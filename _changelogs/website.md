@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-03-09 Add snake-support demo
   - 2025-03-02 Automated test reports on more... page
   - 2025-02-13 Add pixel-art-workflow demo
   - 2025-01-19 Add ski-stunt demo
