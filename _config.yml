@@ -21,7 +21,7 @@ collections:
 
 # checked by bash scripts after jekyll build
 # replace index.html with existing page
-homepage: snake-support.html
+homepage: tremolo.html
 
 # demos to include in navigation bar
 header_pages:

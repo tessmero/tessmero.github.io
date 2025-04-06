@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-04-06 Add tremolo demo
   - 2025-03-09 Add snake-support demo
   - 2025-03-02 Automated test reports on more... page
   - 2025-02-13 Add pixel-art-workflow demo
