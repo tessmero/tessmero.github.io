@@ -49,6 +49,7 @@ permalink: /demo_list
   <div id="demo_list" class="row">
     {% assign ordered_demos = site.demos | sort:"date" %}
     {% for demo in ordered_demos reversed %}
+      {% unless demo.hidden %}
     <div class="demo-item col-lg-6 col-md-6 col-sm-12 mb-4" 
      data-title="{{ demo.title }}" 
      data-date="{{ demo.date }}" 
@@ -122,6 +123,7 @@ permalink: /demo_list
         </div>
       </div>
     </div>  
+  {% endunless %}
     {% endfor %}
   </div>
 </div>

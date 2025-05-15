@@ -7,7 +7,7 @@
 
     {%- include header.html -%}
 
-<iframe id="gameFrame" src="/iframe/{{page.slug}}/index.html" allowfullscreen onload="frameLoad();"></iframe>
+<iframe id="gameFrame" src="" allowfullscreen></iframe>
  
 
 
@@ -17,10 +17,13 @@
 window.addEventListener('load', function() {
   var iframe = document.getElementById('gameFrame');
   var parentParams = window.location.search;
-  var iframeSrc = iframe.src;
+  var iframeSrc = "/iframe/{{page.slug}}/index.html";
   
+
   if (parentParams) {
     iframe.src = iframeSrc + (iframeSrc.includes('?') ? '&' : '?') + parentParams.substr(1);
+  } else {
+    iframe.src = iframeSrc
   }
 });
 
