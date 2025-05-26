@@ -21,7 +21,7 @@ collections:
 
 # checked by bash scripts after jekyll build
 # replace index.html with existing page
-homepage: puppy-workshop.html
+homepage: marble-workshop.html
 
 # demos to include in navigation bar
 header_pages:
