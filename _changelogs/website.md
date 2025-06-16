@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-06-16 Add sea-block demo
   - 2025-06-11 Add css-workshop demo
   - 2025-06-03 Add endless-workshop demo
   - 2025-05-25 Add marble-workshop demo
