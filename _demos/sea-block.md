@@ -2,8 +2,9 @@
 layout: demo
 title: "Sea Block"
 date: 2025-06-16
-lastUpdated: 2025-07-01
+lastUpdated: 2025-07-04
 changelog:
+  - 2025-07-04 Debug boundary animation and mouse control.
   - 2025-07-01 Add gfx settings and smooth tile animations.
   - 2025-06-26 Add space-quest terrain generator.
   - 2025-06-24 Add color styles.
