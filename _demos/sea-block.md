@@ -2,8 +2,9 @@
 layout: demo
 title: "Sea Block"
 date: 2025-06-16
-lastUpdated: 2025-07-06
+lastUpdated: 2025-07-14
 changelog:
+  - 2025-07-14 Add transition sequence and skip button.
   - 2025-07-06 Add start animation sequence.
   - 2025-07-04 Debug boundary animation and mouse control.
   - 2025-07-01 Add gfx settings and smooth tile animations.
