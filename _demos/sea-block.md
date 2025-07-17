@@ -4,7 +4,8 @@ title: "Sea Block"
 date: 2025-06-16
 lastUpdated: 2025-07-16
 changelog:
-  - 2025-07-16 Add splash screen (game), animated flora test (terrain generator), tile inspector (game), fix "paste style" button.
+  - 2025-07-17 Add generated music test, play/pause button under controls.
+  - 2025-07-16 Add splash screen (game), add animated flora test (terrain generator), add tile inspector (game), fix "paste style" button.
   - 2025-07-14 Add transition sequence and skip button.
   - 2025-07-06 Add start animation sequence.
   - 2025-07-04 Debug boundary animation and mouse control.
