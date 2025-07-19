@@ -51,3 +51,6 @@ title: "Changelog"
     </li>
   {% endif %}
 </ul>
+
+
+{% include music-player.html %}

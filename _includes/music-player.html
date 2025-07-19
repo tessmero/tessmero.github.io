@@ -190,11 +190,19 @@
     const allMusicIcons = document.querySelectorAll('.fa-music');
     allMusicIcons.forEach(item => {
       item.addEventListener('click', function(event) {
-        // pick song based on demo url
-        const href = item.parentNode.querySelector('a').getAttribute('href')
-        let songKey = href.substring(1)
 
-        // Select the dropdown element
+        let songKey = ''
+
+        // pick song based on demo url
+        try {
+          const href = item.parentNode.querySelector('a').getAttribute('href')
+          songKey = href.substring(1)
+        } catch (_e) {
+          // do nothing
+        }
+        
+
+        // get dropdown element
         const selectElement = document.getElementById("select-song");
 
 
