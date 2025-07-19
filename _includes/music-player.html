@@ -1,0 +1,216 @@
+
+<script>
+  SONGS = {}
+</script>
+
+<script src="assets/javascript/music/music-player.js"></script>
+{% for file in site.static_files %}
+  {% if file.path contains 'assets/javascript/music/songs' and file.extname == '.js' %}
+<script src="{{ file.path | relative_url }}"></script>
+  {% endif %}
+{% endfor %}
+
+
+
+<div id="music-player" style="display: none;">
+  <span id="song-player-label" class="hidden-on-small-screen">Song Player</span>
+  <select name="select-song" id="select-song">
+  </select>
+  <button id="play">Play A</button>
+  <button id="playOgg">Play B</button>
+  <button id="stop">Stop</button>
+  <input type="range" min="0" max="1" step="0.01" value=".5" class="slider" id="musicVolumeSlider">
+  <button id="close" class="hidden-on-small-screen">Close</button>
+</div>
+
+<style> 
+
+  @media (max-width: 600px) {
+       .hidden-on-small-screen {
+           display: none;
+       }
+   }
+  #music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  #music-player > * {
+    margin: 0 3px;
+  }
+
+  #song-player-label {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+  }
+
+  #close {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+</style>
+
+<script>
+  const slider = document.getElementById("musicVolumeSlider");
+  const output = document.getElementById("volumeValue");
+  const musicPlayer = document.getElementById("music-player");
+
+  slider.oninput = updateVolume
+
+  function updateVolume(){
+    const sliderVal = parseFloat(slider.value)
+    MusicManager().outNode.gain.value = sliderVal * 5; // set volume for lofi
+    if( oggPlayer ){
+      oggPlayer.volume = sliderVal
+    }
+  }
+
+  function playClicked(){
+    const selectElement = document.getElementById("select-song");
+    const songKey = selectElement.value; 
+    const songData = SONGS[songKey]
+
+    for( const audio of Object.values(allOggPlayers) ){
+      audio.pause()
+    }
+    MusicManager().stopMusic();
+    MusicManager().startMusicLoop(songData);
+
+    updateVolume() 
+  }
+
+  let oggPlayer = null
+  const allOggPlayers = {}
+
+  function startOggPlayer(){
+
+    // play ogg from beginning ASAP
+    const audio = oggPlayer
+    audio.currentTime = 0;
+    //audio.load()
+
+    console.log('play A')
+    audio.play().then(() => { console.log('playing'); }).catch(() => {
+      audio.addEventListener('canplaythrough', () => { 
+    console.log('play B')
+        audio.play()
+      }, { once: true });
+    });
+  }
+
+  function playOggClicked(){
+    const selectElement = document.getElementById("select-song");
+    const songKey = selectElement.value; 
+
+
+    MusicManager().stopMusic(); // stop lofi
+  
+
+    for( const [key,audio] of Object.entries(allOggPlayers) ){
+      if( key !== songKey ){
+        audio.pause()
+      }
+    }
+
+    if( !allOggPlayers[songKey] ) {
+      // load song for first time
+      oggPlayer = new Audio(`/assets/oggs/${songKey}.ogg`)
+      //oggPlayer.addEventListener('canplaythrough', () => oggPlayer.play());
+      allOggPlayers[songKey] = oggPlayer
+    } else {
+      // song previously loaded
+      oggPlayer = allOggPlayers[songKey]
+    }
+
+
+    startOggPlayer()
+    updateVolume() 
+  }
+
+  function showMusicPlayer() {
+    musicPlayer.style.display = "flex";
+  }
+
+  function hideMusicPlayer() {
+    musicPlayer.style.display = "none";
+    MusicManager().stopMusic(); // stop lofi
+
+    for( const audio of Object.values(allOggPlayers) ){
+      audio.pause()
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const playButton = document.getElementById('play');
+    const playOggButton = document.getElementById('playOgg');
+    const stopButton = document.getElementById('stop');
+    const closeButton = document.getElementById('close');
+    const selectElem = document.getElementById('select-song');
+
+    selectElem.addEventListener('change', () => { 
+        const selectedValue = selectElem.value;
+        console.log("Dropdown value changed to:", selectedValue);
+        playOggClicked()
+    })
+
+    // Populate the select element with options from SONGS
+    for (const songKey in SONGS) {
+      const option = document.createElement('option');
+      option.value = songKey;
+      option.textContent = songKey.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      selectElem.appendChild(option);
+    }
+
+    playButton.addEventListener('click', playClicked);
+    playOggButton.addEventListener('click', playOggClicked);
+
+    stopButton.addEventListener('click', function() {
+      MusicManager().stopMusic(); // stop lofi
+      for( const audio of Object.values(allOggPlayers) ){
+        audio.pause()
+      }
+    });
+
+    closeButton.addEventListener('click', hideMusicPlayer);
+
+    // show music player when clicking music note icon
+    const allMusicIcons = document.querySelectorAll('.fa-music');
+    allMusicIcons.forEach(item => {
+      item.addEventListener('click', function(event) {
+        // pick song based on demo url
+        const href = item.parentNode.querySelector('a').getAttribute('href')
+        let songKey = href.substring(1)
+
+        // Select the dropdown element
+        const selectElement = document.getElementById("select-song");
+
+
+        const isValid =
+          Array.from(selectElement.options).some(option => option.value === songKey);
+        if (isValid) {
+          selectElement.value = songKey;
+        } else {
+          // no song selected or something went wrong
+          selectElement.value = 'orbital-launch'; 
+        }
+
+
+        showMusicPlayer();
+        playOggClicked();
+      });
+    })
+  });
+</script>

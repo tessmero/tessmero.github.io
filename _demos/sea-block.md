@@ -16,6 +16,8 @@ changelog:
   - 2025-06-22 Add triangle and octagon tiling modes.
   - 2025-06-21 Add hex tiling mode and physics controls.
 hasReports: true
+sound: true
+music: true
 techs:
   - physics
   - three-js
