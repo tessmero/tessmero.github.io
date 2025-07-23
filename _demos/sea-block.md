@@ -21,6 +21,7 @@ hasReports: true
 sound: true
 music: true
 techs:
+  - multitouch
   - physics
   - three-js
 ---
