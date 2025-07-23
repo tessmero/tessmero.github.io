@@ -2,8 +2,9 @@
 layout: demo
 title: "Sea Block"
 date: 2025-06-16
-lastUpdated: 2025-07-20
+lastUpdated: 2025-07-22
 changelog:
+  - 2025-07-22 Add multitouch support (hold buttons and rotate/zoom camera simultaniously).
   - 2025-07-20 Make camera and pixel-style gui playable on various screens.
   - 2025-07-18 Add 2D transitions with different tilings, add camera control with WASD/arrow keys.
   - 2025-07-17 Add generated music test, play/pause button under controls.
