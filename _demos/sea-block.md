@@ -2,8 +2,9 @@
 layout: demo
 title: "Sea Block"
 date: 2025-06-16
-lastUpdated: 2025-08-01
+lastUpdated: 2025-08-13
 changelog:
+  - 2025-08-13 Add chess puzzle game with 7 levels.
   - 2025-08-01 Rework 2d tiling effects and add in-engine sprite atlas viewer.
   - 2025-07-28 Add single- and dual-joystick controls for touch screens
   - 2025-07-24 Rework 2D graphics and add one new transition.
