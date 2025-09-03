@@ -2,8 +2,9 @@
 layout: demo
 title: "Sea Block"
 date: 2025-06-16
-lastUpdated: 2025-08-20
+lastUpdated: 2025-09-03
 changelog:
+  - 2025-09-03 Add start menu, gamepad support, 'raft' game inspired by Scrap Mechanic.
   - 2025-08-20 Add chess gameplay test in automated reports. Fix pawn placement bug.
   - 2025-08-19 Improved transitions, add one transition, add simple scenery for chess levels
   - 2025-08-13 Add chess puzzle game with 7 levels.
