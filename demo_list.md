@@ -3,7 +3,6 @@ layout: demo_list
 permalink: /demo_list
 ---
 
-
 <div class="container col-lg-8 col-md-12">
   <!-- Sort Buttons with Icons -->
   <div class="mb-3">

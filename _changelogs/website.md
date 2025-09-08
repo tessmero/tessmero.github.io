@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-09-08 Add vibesort demo
   - 2025-07-19 Add remastered songs for <span class="fa fa-music" aria-hidden="true" style="cursor:pointer"></span> easter egg
   - 2025-06-16 Add sea-block demo
   - 2025-06-11 Add css-workshop demo
