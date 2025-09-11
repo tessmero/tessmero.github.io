@@ -4,7 +4,7 @@ title: "Sea Block"
 date: 2025-06-16
 lastUpdated: 2025-09-11
 changelog:
-  - "2025-09-11 Fix bugs: race conditions on startup, chess game and scenery not resetting, inactive gamepad devices interfering, camera jumping on toggling settings menu."
+  - "2025-09-11 <details><summary>Fix bugs...</summary><ul><li>race conditions on startup</li><li>chess game and scenery not resetting</li><li>inactive gamepad devices interfering</li><li>camera jumping on toggling settings menu</li></ul></details>"
   - 2025-09-03 Add start menu, gamepad support, 'raft' game inspired by Scrap Mechanic.
   - 2025-08-20 Add chess gameplay test in automated reports. Fix pawn placement bug.
   - 2025-08-19 Improved transitions, add one transition, add simple scenery for chess levels

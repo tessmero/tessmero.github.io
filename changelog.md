@@ -33,8 +33,15 @@ title: "Changelog"
     {% else %}
       {% if last_date != "" %}
         <li>
+          {% assign first_char = last_message | strip | slice: 0, 1 %}
+
+
           {{ last_date }} <b>{{ combined_titles }}</b> 
-          <br>&nbsp;&nbsp;{{ last_message | strip }}
+          
+          {% if first_char != '<' %}
+            <br>
+          {% endif %}
+          &nbsp;&nbsp;{{ last_message | strip }}
         </li>
       {% endif %}
 
