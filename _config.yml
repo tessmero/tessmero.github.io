@@ -21,13 +21,13 @@ collections:
 
 # checked by bash scripts after jekyll build
 # replace index.html with existing page
-homepage: vibesort.html
+homepage: sea-block.html
 
 # demos to include in navigation bar
 header_pages:
-  - "_demos/sea-block.md"
-  - "_demos/ski-stunt.md"
-  - "_demos/fight-cub.md"
+  - "_demos/orbital-launch.md"
+  - "_demos/grove-tender.md"
+  - "_demos/collide-o-scope.md"
          
   
 

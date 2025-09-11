@@ -10,7 +10,7 @@ if ! bash verify_md_zip.sh; then
 fi
 
 # Start Jekyll server in the background
-bundle exec jekyll serve &
+bundle exec jekyll serve --no-watch &
 
 # Wait for Jekyll to start (adjust sleep time if needed)
 sleep 10

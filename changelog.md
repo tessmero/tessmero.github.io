@@ -34,7 +34,7 @@ title: "Changelog"
       {% if last_date != "" %}
         <li>
           {{ last_date }} <b>{{ combined_titles }}</b> 
-          <br>&nbsp;&nbsp;{{ last_message }}
+          <br>&nbsp;&nbsp;{{ last_message | strip }}
         </li>
       {% endif %}
 
@@ -47,7 +47,7 @@ title: "Changelog"
   {% if last_date != "" %}
     <li>
       {{ last_date }} <b>{{ combined_titles }}</b> 
-      <br>&nbsp;&nbsp;{{ last_message }}
+      <br>&nbsp;&nbsp;{{ last_message | strip }}
     </li>
   {% endif %}
 </ul>
