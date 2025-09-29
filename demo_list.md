@@ -98,9 +98,15 @@ permalink: /demo_list
             {% endif %}
           {% endfor %}
           {% if demo.hasReports %}
-          <button  style="width:100%;height:25px;font-size: 0.9em;" data-src="/iframe/{{ demo.slug }}/reports/index.html" class="py-0 btn btn-sm btn-outline-dark">
-              <span class="fa fa-check" aria-hidden="true"></span> View Reports
-            </button>
+            {% if demo.slug == 'recursio' %}
+              <button  style="width:100%;height:25px;font-size: 0.9em;" data-src="/iframe/{{ demo.slug }}/reports/index.html" class="py-0 btn btn-sm btn-outline-dark">
+                <span class="fa fa-check" aria-hidden="true"></span> Reports (SPOILERS)
+              </button>
+            {% else %}
+              <button  style="width:100%;height:25px;font-size: 0.9em;" data-src="/iframe/{{ demo.slug }}/reports/index.html" class="py-0 btn btn-sm btn-outline-dark">
+                <span class="fa fa-check" aria-hidden="true"></span> View Reports
+              </button>
+            {% endif %}
           {% endif %}
         </div>
 
