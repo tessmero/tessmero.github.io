@@ -21,6 +21,7 @@ title: "Changelog"
   {% assign last_date = "" %}
   {% assign last_message = "" %}
   {% assign combined_titles = "" %}
+  {% assign combined_titles_count = 0 %}
 
   {% for change in sorted_changes %}
     {% assign parts = change | split: '|' %}
@@ -30,17 +31,21 @@ title: "Changelog"
 
     {% if current_date == last_date and current_message == last_message %}
       {% assign combined_titles = current_title | append: ", " | append: combined_titles %}
+      {% assign combined_titles_count = combined_titles_count | plus: 1 %}
     {% else %}
       {% if last_date != "" %}
         <li>
           {% assign first_char = last_message | strip | slice: 0, 1 %}
 
-
-          {{ last_date }} <b>{{ combined_titles }}</b> 
-          
-          {% if first_char != '<' %}
-            <br>
+          {% if combined_titles_count > 1 %}
+            {{ last_date }} <details style="display:inline;"><summary style="display:inline;"><b>{{ combined_titles_count }} Demos...</b></summary> <b>{{ combined_titles }}</b></details>
+          {% else %}
+            {{ last_date }} <b>{{ combined_titles }}</b> 
+            {% if first_char != '<' %}
+              <br>
+            {% endif %}
           {% endif %}
+          
           &nbsp;&nbsp;{{ last_message | strip }}
         </li>
       {% endif %}
@@ -48,6 +53,7 @@ title: "Changelog"
       {% assign last_date = current_date %}
       {% assign last_message = current_message %}
       {% assign combined_titles = current_title %}
+      {% assign combined_titles_count = 1 %}
     {% endif %}
   {% endfor %}
 
@@ -58,6 +64,5 @@ title: "Changelog"
     </li>
   {% endif %}
 </ul>
-
 
 {% include music-player.html %}
