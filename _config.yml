@@ -25,9 +25,9 @@ homepage: sea-block.html
 
 # demos to include in navigation bar
 header_pages:
-  - "_demos/orbital-launch.md"
-  - "_demos/grove-tender.md"
-  - "_demos/collide-o-scope.md"
+  - "_demos/sketch-ball.md"
+  - "_demos/recursio.md"
+  - "_demos/ski-stunt.md"
          
   
 
