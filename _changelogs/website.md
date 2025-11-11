@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2025-11-11 Add matchsticks demo, fix demos' iframes loading twice
   - 2025-10-22 Fix display on mobile, add links to github, add filter for open source demos
   - 2025-10-19 Migrated to Next.js / Tailwind
   - 2025-09-29 Add recursio demo
