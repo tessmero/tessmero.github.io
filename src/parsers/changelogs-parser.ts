@@ -73,6 +73,9 @@ export function parseChangelog(data: { changelog?: string[], title?: string }, i
       })
     }
   }
+
+  changelog.sort((a, b) => b.date.iDate - a.date.iDate)
+
   return changelog
 }
 
