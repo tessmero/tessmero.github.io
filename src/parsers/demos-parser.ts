@@ -130,9 +130,6 @@ export function extractDemoZips(demos: DemoProps[]) {
     fs.mkdirSync(outputDir, { recursive: true })
   }
 
-  // debug 2025-11-18
-  console.log('listing demo ids: ', JSON.stringify(demos.map(d => d.id).sort()))
-
   // extract zips to output dir, creating a new subdir for each demo
   demos.forEach((demo) => {
     const zipPath = path.join(zipsDir, demo.id + '.zip')
