@@ -31,7 +31,7 @@ export interface DemoProps {
 
 // Use process-level cache for demos metadata
 const DEMOS_CACHE_KEY = '__demos_metadata_cache__'
-const isCacheEnabled = false
+const isCacheEnabled = true
 export function getCachedDemos(): DemoProps[] {
   // console.log('getCachedDemos')
 
@@ -129,6 +129,9 @@ export function extractDemoZips(demos: DemoProps[]) {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true })
   }
+
+  // debug 2025-11-18
+  console.log('listing demo ids: ', JSON.stringify(demos.map(d => d.id).sort()))
 
   // extract zips to output dir, creating a new subdir for each demo
   demos.forEach((demo) => {
