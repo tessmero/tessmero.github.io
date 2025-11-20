@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack && cp out/water-level.html out/index.html",
+    "build": "next build --turbopack && cp out/tower-toppler.html out/index.html",
     "start": "next start",
     "postinstall": "patch-package",
     "lint": "eslint"
