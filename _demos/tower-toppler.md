@@ -3,7 +3,7 @@ layout: demo
 title: "Tower Toppler"
 date: 2025-11-20
 lastUpdated: 2025-12-01
-hasReports: false
+hasReports: true
 sound: false
 music: false
 techs: 
