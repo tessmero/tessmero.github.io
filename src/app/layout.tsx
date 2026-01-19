@@ -42,7 +42,7 @@ export default function RootLayout({ children, navbar }: RootLayoutProps) {
             className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 px-[2px] py-[1px] text-[10px] bg-black text-white"
             style={{ pointerEvents: 'none' }}
           >
-            <span>© 2023 - 2025 Oliver Tessmer</span>
+            <span>© 2023 - 2026 Oliver Tessmer</span>
           </footer>
         </ThemeProvider>
       </body>

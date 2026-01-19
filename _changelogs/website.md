@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2026-01-19 Add woo-pong demo
   - 2025-11-20 Add tower-toppler demo
   - 2025-11-17 Add water-level demo
   - 2025-11-11 Add matchsticks demo, fix demos' iframes loading twice
