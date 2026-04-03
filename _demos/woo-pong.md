@@ -2,13 +2,14 @@
 layout: demo
 title: "Woo Pong"
 date: 2026-01-19
-lastUpdated: 2026-03-20
+lastUpdated: 2026-04-03
 techs:
   - physics
   - multitouch
 hasReports: true
 sound: true
 changelog:
+  - 2026-04-03 Add home screen with incremental game (unlocked after completing one race), clean up title screen and intro sequence, add alternate title screen, allow skipping title+intro to load directly into home screen.
   - 2026-03-20 Allow fidget spinners to impart momentum to balls, make races closer on average (selected ball tends to just barely win).
   - 2026-03-14 Improve 3D text style on title screen.
   - 2026-03-10 Add comic-book-style title screen.
