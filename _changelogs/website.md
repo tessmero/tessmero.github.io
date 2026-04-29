@@ -1,39 +1,40 @@
 ---
 title: "Website"
 changelog:
-  - 2026-01-19 Add woo-pong demo
-  - 2025-11-20 Add tower-toppler demo
-  - 2025-11-17 Add water-level demo
-  - 2025-11-11 Add matchsticks demo, fix demos' iframes loading twice
+  - 2026-04-29 Add <a href="/track-game">track-game</a> demo
+  - 2026-01-19 Add <a href="/woo-pong">woo-pong</a> demo
+  - 2025-11-20 Add <a href="/tower-toppler">tower-toppler</a> demo
+  - 2025-11-17 Add <a href="/water-level">water-level</a> demo
+  - 2025-11-11 Add <a href="/matchsticks">matchsticks</a> demo, fix demos' iframes loading twice
   - 2025-10-22 Fix display on mobile, add links to github, add filter for open source demos
   - 2025-10-19 Migrated to Next.js / Tailwind
-  - 2025-09-29 Add recursio demo
-  - 2025-09-08 Add vibesort demo
+  - 2025-09-29 Add <a href="/recursio">recursio</a> demo
+  - 2025-09-08 Add <a href="/vibesort">vibesort</a> demo
   - 2025-07-19 Add remastered songs for <span class="fa fa-music" aria-hidden="true" style="cursor:pointer"></span> easter egg
-  - 2025-06-16 Add sea-block demo
-  - 2025-06-11 Add css-workshop demo
-  - 2025-06-03 Add endless-workshop demo
-  - 2025-05-25 Add marble-workshop demo
-  - 2025-04-30 Add puppy-workshop demo
-  - 2025-04-06 Add tremolo demo
-  - 2025-03-09 Add snake-support demo
+  - 2025-06-16 Add <a href="/sea-block">sea-block</a> demo
+  - 2025-06-11 Add <a href="/css-workshop">css-workshop</a> demo
+  - 2025-06-03 Add <a href="/endless-workshop">endless-workshop</a> demo
+  - 2025-05-25 Add <a href="/marble-workshop">marble-workshop</a> demo
+  - 2025-04-30 Add <a href="/puppy-workshop">puppy-workshop</a> demo
+  - 2025-04-06 Add <a href="/tremolo">tremolo</a> demo
+  - 2025-03-09 Add <a href="/snake-support">snake-support</a> demo
   - 2025-03-02 Automated test reports on more... page
-  - 2025-02-13 Add pixel-art-workflow demo
-  - 2025-01-19 Add ski-stunt demo
+  - 2025-02-13 Add <a href="/pixel-art-workflow">pixel-art-workflow</a> demo
+  - 2025-01-19 Add <a href="/ski-stunt">ski-stunt</a> demo
   - 2025-01-06 Share url params with iframe (used for collide-o-scope)
   - 2025-01-05 Add fullscreen button and make quit buttons exit fullscreen
   - 2024-12-31 Support zipped assets and fullscreen iframe like itch.io
   - 2024-12-29 Add music easter egg on more... page
-  - 2024-12-07 Add sketch-ball demo
+  - 2024-12-07 Add <a href="/sketch-ball">sketch-ball</a> demo
   - 2024-11-26 Remove "technique" pages, switch to simple tag filters on more... page
-  - 2024-11-25 Add cube-dance demo
-  - 2024-11-17 Add rocket-car demo
-  - 2024-11-10 Add avalanche demo
-  - 2024-11-02 Add itsudoku demo
-  - 2024-10-27 Add boating-school demo
+  - 2024-11-25 Add <a href="/cube-dance">cube-dance</a> demo
+  - 2024-11-17 Add <a href="/rocket-car">rocket-car</a> demo
+  - 2024-11-10 Add <a href="/avalanche">avalanche</a> demo
+  - 2024-11-02 Add <a href="/itsudoku">itsudoku</a> demo
+  - 2024-10-27 Add <a href="/boating-school">boating-school</a> demo
   - 2024-10-21 Add changelog and update more... page
-  - 2024-10-20 Add rail-layer demo
-  - 2024-10-12 Add collide-o-scope demo
-  - 2024-10-06 Add orbital launch demo
+  - 2024-10-20 Add <a href="/rail-layer">rail-layer</a> demo
+  - 2024-10-12 Add <a href="/collide-o-scope">collide-o-scope</a> demo
+  - 2024-10-06 Add <a href="/orbital-launch">orbital launch</a> demo
   - 2024-10-01 Set up jekyll site
 ---
