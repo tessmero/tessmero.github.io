@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2026-06-04 Add <a href="/word-tiles">word-tiles</a> demo
   - 2026-04-29 Add <a href="/track-game">track-game</a> demo
   - 2026-01-19 Add <a href="/woo-pong">woo-pong</a> demo
   - 2025-11-20 Add <a href="/tower-toppler">tower-toppler</a> demo
