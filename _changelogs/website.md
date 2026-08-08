@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2026-08-07 Add <a href="/paint-swirls">paint-swirls</a> demo
   - 2026-06-04 Add <a href="/word-tiles">word-tiles</a> demo
   - 2026-04-29 Add <a href="/track-game">track-game</a> demo
   - 2026-01-19 Add <a href="/woo-pong">woo-pong</a> demo
