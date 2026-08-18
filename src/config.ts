@@ -5,5 +5,5 @@ export const homePage = '/paint-swirls' // url of demo or any page
 
 export const headerPages = [
   // demo IDs to show in navbar
-  'tower-toppler', 'orbital-launch', 'word-tiles',
+  'tower-toppler', 'collide-o-scope', 'sketch-ball',
 ]
