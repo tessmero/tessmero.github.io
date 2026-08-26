@@ -1,8 +1,12 @@
 ---
 layout: demo
-title: "Home Run"
-date: 2026-08-18
-hidden: true
+title: "Home Run Challenge"
+date: 2026-08-25
+sound: true
+music: true
+techs:
+ - physics
+hasReports: false
 ---
 
 
