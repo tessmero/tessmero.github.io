@@ -1,6 +1,7 @@
 ---
 title: "Website"
 changelog:
+  - 2026-10-26 Add <a href="/tilegame-2026">tilegame-2026</a> demo
   - 2026-08-25 Add <a href="/home-run">home-run</a> demo
   - 2026-08-07 Add <a href="/paint-swirls">paint-swirls</a> demo
   - 2026-06-04 Add <a href="/word-tiles">word-tiles</a> demo
